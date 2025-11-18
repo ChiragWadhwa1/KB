@@ -1,0 +1,3060 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kaarigar Connect - Premium Wood Carving Platform</title>
+    <script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+    <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700;800&family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        
+        .font-serif { font-family: 'Playfair Display', serif; }
+        .font-sans { font-family: 'Inter', sans-serif; }
+        
+        /* Premium Color Palette */
+        :root {
+            --bg-primary: #0A0A0A;
+            --bg-secondary: #1A1612;
+            --bg-surface: #2D1B0E;
+            --bg-card: #1A1612;
+            --accent: #8B4513;
+            --accent-light: #CD853F;
+            --accent-lighter: #DEB887;
+            --text-primary: #FFFFFF;
+            --text-secondary: #E8E2D4;
+            --text-muted: #D4C4A8;
+            --text-dim: #B8A082;
+        }
+        
+        body { 
+            font-family: 'Inter', sans-serif;
+            background: linear-gradient(135deg, #0A0A0A 0%, #1A1612 25%, #2D1B0E 50%, #3D2817 75%, #4A2C17 100%);
+            color: var(--text-primary);
+            overflow-x: hidden;
+        }
+        
+        /* Enhanced Page Background */
+        .page-bg {
+            background: radial-gradient(circle at 20% 20%, rgba(139, 69, 19, 0.15) 0%, transparent 50%),
+                        radial-gradient(circle at 80% 80%, rgba(205, 133, 63, 0.12) 0%, transparent 50%),
+                        linear-gradient(135deg, #0A0A0A 0%, #1A1612 25%, #2D1B0E 50%, #3D2817 75%, #4A2C17 100%);
+        }
+        
+        /* Bento Grid Styles */
+        .bento-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 1.5rem;
+            padding: 1.5rem;
+        }
+        
+        .bento-item {
+            background: rgba(26, 22, 18, 0.95);
+            backdrop-filter: blur(24px);
+            border: 1px solid rgba(222, 184, 135, 0.15);
+            border-radius: 1.5rem;
+            padding: 1.5rem;
+            transition: all 0.3s ease;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+        }
+        
+        .bento-item:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 12px 48px rgba(139, 69, 19, 0.3);
+            border-color: rgba(222, 184, 135, 0.3);
+        }
+        
+        .bento-large {
+            grid-column: span 2;
+        }
+        
+        /* Premium Glass Effects */
+        .glass {
+            background: rgba(45, 27, 14, 0.85);
+            backdrop-filter: blur(24px);
+            border: 1px solid rgba(222, 184, 135, 0.15);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.6);
+        }
+        
+        .premium-card {
+            background: linear-gradient(145deg, rgba(45, 27, 14, 0.95), rgba(26, 22, 18, 0.9));
+            backdrop-filter: blur(24px);
+            border: 1px solid rgba(205, 133, 63, 0.2);
+            box-shadow: 0 25px 50px rgba(0, 0, 0, 0.5);
+        }
+        
+        /* Camera Scanner Styles */
+        .camera-view {
+            position: fixed;
+            inset: 0;
+            background: #000;
+            z-index: 9999;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .scanner-frame {
+            position: relative;
+            width: 320px;
+            height: 320px;
+            border: 3px solid var(--accent-light);
+            border-radius: 24px;
+            overflow: hidden;
+        }
+        
+        .scanner-line {
+            position: absolute;
+            width: 100%;
+            height: 3px;
+            background: linear-gradient(90deg, transparent, var(--accent-light), transparent);
+            animation: scan 2s linear infinite;
+            box-shadow: 0 0 20px var(--accent-light);
+        }
+        
+        @keyframes scan {
+            0% { top: 0; }
+            50% { top: 100%; }
+            100% { top: 0; }
+        }
+        
+        .scanner-corners {
+            position: absolute;
+            inset: 0;
+        }
+        
+        .corner {
+            position: absolute;
+            width: 40px;
+            height: 40px;
+            border: 4px solid var(--accent-light);
+        }
+        
+        .corner-tl { top: 0; left: 0; border-right: none; border-bottom: none; }
+        .corner-tr { top: 0; right: 0; border-left: none; border-bottom: none; }
+        .corner-bl { bottom: 0; left: 0; border-right: none; border-top: none; }
+        .corner-br { bottom: 0; right: 0; border-left: none; border-top: none; }
+        
+        /* Button Styles */
+        .btn-primary {
+            background: linear-gradient(135deg, #8B4513 0%, #CD853F 100%);
+            color: white;
+            border: none;
+            padding: 1rem 2rem;
+            border-radius: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 12px rgba(139, 69, 19, 0.3);
+        }
+        
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 24px rgba(139, 69, 19, 0.4);
+            background: linear-gradient(135deg, #654321 0%, #8B4513 100%);
+        }
+        
+        .btn-secondary {
+            background: rgba(45, 27, 14, 0.8);
+            color: var(--text-secondary);
+            border: 1px solid rgba(222, 184, 135, 0.15);
+            padding: 1rem 2rem;
+            border-radius: 1rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .btn-secondary:hover {
+            background: rgba(61, 40, 23, 0.9);
+            color: var(--text-primary);
+            transform: translateY(-2px);
+        }
+        
+        /* Animations */
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        @keyframes slideIn {
+            from { transform: translateX(-100%); }
+            to { transform: translateX(0); }
+        }
+        
+        @keyframes float {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-10px); }
+        }
+        
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.7; }
+        }
+        
+        @keyframes glow {
+            0%, 100% { box-shadow: 0 0 20px rgba(139, 69, 19, 0.4); }
+            50% { box-shadow: 0 0 30px rgba(205, 133, 63, 0.6); }
+        }
+        
+        .fade-in { animation: fadeIn 0.6s ease-out; }
+        .slide-in { animation: slideIn 0.4s ease-out; }
+        .floating { animation: float 3s ease-in-out infinite; }
+        .pulse { animation: pulse 2s ease-in-out infinite; }
+        .glow { animation: glow 2s ease-in-out infinite; }
+        .animate-fade-in { animation: fadeIn 0.3s ease-out; }
+        
+        /* Utility Classes */
+        .line-clamp-2 {
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
+        
+        /* Order Tracking Styles */
+        .order-tracker {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: relative;
+            padding: 2rem 0;
+        }
+        
+        .order-tracker::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: rgba(255, 255, 255, 0.1);
+            transform: translateY(-50%);
+            z-index: 0;
+        }
+        
+        .order-step {
+            position: relative;
+            z-index: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            flex: 1;
+        }
+        
+        .order-step-circle {
+            width: 48px;
+            height: 48px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: rgba(26, 22, 18, 0.95);
+            border: 3px solid rgba(255, 255, 255, 0.1);
+            margin-bottom: 0.75rem;
+            transition: all 0.3s ease;
+        }
+        
+        .order-step.active .order-step-circle {
+            background: linear-gradient(135deg, #8B4513 0%, #CD853F 100%);
+            border-color: #CD853F;
+            box-shadow: 0 0 20px rgba(205, 133, 63, 0.5);
+        }
+        
+        .order-step.completed .order-step-circle {
+            background: #10B981;
+            border-color: #10B981;
+        }
+        
+        .order-step-pulse {
+            position: absolute;
+            width: 48px;
+            height: 48px;
+            border-radius: 50%;
+            background: rgba(205, 133, 63, 0.3);
+            animation: pulse-ring 2s ease-out infinite;
+        }
+        
+        @keyframes pulse-ring {
+            0% {
+                transform: scale(1);
+                opacity: 1;
+            }
+            100% {
+                transform: scale(1.5);
+                opacity: 0;
+            }
+        }
+        
+        .progress-line {
+            position: absolute;
+            top: 50%;
+            left: 0;
+            height: 3px;
+            background: linear-gradient(90deg, #10B981, #CD853F);
+            transform: translateY(-50%);
+            z-index: 0;
+            transition: width 0.5s ease;
+        }
+        
+        /* Multi-step Form */
+        .step-indicator {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 2rem;
+        }
+        
+        .step {
+            flex: 1;
+            height: 4px;
+            background: rgba(255, 255, 255, 0.1);
+            margin: 0 0.25rem;
+            border-radius: 2px;
+            transition: all 0.3s ease;
+        }
+        
+        .step.active {
+            background: var(--accent-light);
+        }
+        
+        /* Scrollbar */
+        .custom-scrollbar::-webkit-scrollbar { width: 6px; }
+        .custom-scrollbar::-webkit-scrollbar-track { background: rgba(255, 255, 255, 0.1); border-radius: 10px; }
+        .custom-scrollbar::-webkit-scrollbar-thumb { background: rgba(255, 255, 255, 0.3); border-radius: 10px; }
+        .custom-scrollbar::-webkit-scrollbar-thumb:hover { background: rgba(255, 255, 255, 0.5); }
+        
+        /* Responsive */
+        @media (max-width: 768px) {
+            .bento-large { grid-column: span 1; }
+            .bento-grid { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body>
+    <div id="root">
+        <div style="min-height: 100vh; display: flex; align-items: center; justify-content: center; background: linear-gradient(135deg, #0A0A0A 0%, #1A1612 50%, #2D1B0E 100%);">
+            <div style="text-align: center; color: white;">
+                <div style="width: 80px; height: 80px; border: 4px solid #CD853F; border-top-color: transparent; border-radius: 50%; margin: 0 auto 20px; animation: spin 1s linear infinite;"></div>
+                <h2 style="font-family: 'Playfair Display', serif; font-size: 2rem; margin-bottom: 10px;">Kaarigar Connect</h2>
+                <p style="color: #E8E2D4;">Loading...</p>
+            </div>
+        </div>
+        <style>
+            @keyframes spin {
+                to { transform: rotate(360deg); }
+            }
+        </style>
+    </div>
+    
+    <script type="text/babel">
+        const { useState, useEffect, useRef } = React;
+        
+        // Simple Icon Component with SVG fallbacks
+        const LucideIcon = ({ name, size = 24, className = "" }) => {
+            const iconRef = useRef(null);
+            
+            useEffect(() => {
+                if (iconRef.current && window.lucide) {
+                    try {
+                        window.lucide.createIcons();
+                    } catch (e) {
+                        console.log('Lucide icons loading...');
+                    }
+                }
+            }, []);
+            
+            return React.createElement('i', { 
+                ref: iconRef,
+                'data-lucide': name,
+                className: className,
+                style: { width: size, height: size, display: 'inline-block' }
+            });
+        };
+        
+        // Enhanced Mock Data
+        const mockArtisans = [
+          {
+            id: 1,
+            name: "Master Ramesh Khatri",
+            craft: "Wood Carver",
+            location: "Bandra West",
+            experience: "25 years",
+            story: "I learned wood carving from my father when I was just 12 years old. For over 25 years, I have been creating intricate designs that tell stories of our heritage.",
+            profileImage: "9.-Swamimalai-Bronzecaster-at-work.jpg",
+            verified: true,
+            rating: 4.8,
+            portfolioImages: [
+              "12-3.jpg",
+              "13MPKUTHIRAIVAHANAM.jpeg",
+              "9a2ca1c7535b2773753d63f865e7e9ae.jpg",
+              "341360c1ec0656330ef58f2a9ea3875c.jpg"
+            ],
+            specialties: ["Temple Architecture", "Furniture Design", "Decorative Panels", "Heritage Restoration"],
+            workshopLocation: "Shop 15, Bandra Artisan Quarter, Mumbai",
+            phone: "+91 98765 43210",
+            email: "ramesh.khatri@kaarigar.com",
+            masterCraftsman: true,
+            awards: ["Mumbai Heritage Award 2023"],
+            commissions: 45,
+            earnings: "₹2,45,000"
+          },
+          {
+            id: 2,
+            name: "Master Arjun Desai",
+            craft: "Wood Carver",
+            location: "Byculla",
+            experience: "18 years",
+            story: "Specializing in intricate miniature wood carvings and detailed figurines. My work focuses on bringing life to small wooden sculptures.",
+            profileImage: "images-9.jpeg",
+            verified: true,
+            rating: 4.9,
+            portfolioImages: [
+              "1840e7b188bb33bd9130d0c595db6c2f.jpg",
+              "A-Historical-Exploration-of-Wood-Carving-in-India.jpg"
+            ],
+            specialties: ["Furniture Design", "Decorative Panels"],
+            workshopLocation: "Byculla Wood Art Studio",
+            phone: "+91 98765 43211",
+            email: "arjun.desai@kaarigar.com",
+            masterCraftsman: true,
+            commissions: 32,
+            earnings: "₹1,85,000"
+          },
+          {
+            id: 3,
+            name: "Master Suresh Patil",
+            craft: "Wood Carver",
+            location: "Dharavi",
+            experience: "30 years",
+            story: "My family has been wood carving for three generations. I specialize in traditional door panels and window frames.",
+            profileImage: "a44e2226aaf0b838f82ccda87c506b541a86885a-1024x684.jpg.avif",
+            verified: true,
+            rating: 4.7,
+            portfolioImages: [
+              "b549d6895fb34e57747958ab7f917550.jpg"
+            ],
+            specialties: ["Heritage Restoration", "Decorative Panels"],
+            workshopLocation: "Dharavi Wood Craft Hub",
+            phone: "+91 98765 43212",
+            email: "suresh.patil@kaarigar.com",
+            masterCraftsman: true,
+            commissions: 28,
+            earnings: "₹1,65,000"
+          },
+          {
+            id: 4,
+            name: "Master Kavita Joshi",
+            craft: "Wood Carver",
+            location: "Worli",
+            experience: "22 years",
+            story: "As one of the few women in wood carving, I specialize in delicate floral patterns and contemporary wooden art.",
+            profileImage: "images-4.jpeg",
+            verified: true,
+            rating: 4.6,
+            portfolioImages: [
+              "hyderabadindiamarch-15-indian-wooden-carving-260nw-601560563.jpg.webp"
+            ],
+            specialties: ["Furniture Design", "Temple Architecture"],
+            workshopLocation: "Worli Creative Wood Studio",
+            phone: "+91 98765 43213",
+            email: "kavita.joshi@kaarigar.com",
+            masterCraftsman: true,
+            commissions: 38,
+            earnings: "₹2,15,000"
+          }
+        ];
+        
+        const mockProducts = [
+          { id: 1, name: "Handcarved Wooden Elephant", price: "₹2,500", artisanId: 1, artisanName: "Master Ramesh Khatri", image: "9a2ca1c7535b2773753d63f865e7e9ae.jpg", category: "Wood Carving", inStock: true },
+          { id: 2, name: "Miniature Wooden Figurine", price: "₹1,800", artisanId: 2, artisanName: "Master Arjun Desai", image: "9b35253ed07416aea407bab52eaab98c.jpg", category: "Wood Carving", inStock: true },
+          { id: 3, name: "Traditional Door Panel", price: "₹3,200", artisanId: 3, artisanName: "Master Suresh Patil", image: "341360c1ec0656330ef58f2a9ea3875c.jpg", category: "Wood Carving", inStock: false },
+          { id: 4, name: "Floral Wooden Art", price: "₹2,100", artisanId: 4, artisanName: "Master Kavita Joshi", image: "1121994413b8625b9b86e05418f9a379.jpg", category: "Wood Carving", inStock: true }
+        ];
+        
+        const mockPartners = [
+          { id: 1, name: "Global Crafts Export", type: "Exporter", location: "Mumbai", verified: true, rating: 4.9, deals: 150 },
+          { id: 2, name: "Heritage Arts International", type: "Middleman", location: "Delhi", verified: true, rating: 4.7, deals: 120 },
+          { id: 3, name: "Artisan Connect Hub", type: "Distributor", location: "Bangalore", verified: true, rating: 4.8, deals: 95 }
+        ];
+        
+        const mockBlogs = [
+          {
+            id: 1,
+            title: "The Story of Teak",
+            excerpt: "Discover the journey of teak wood from forest to finished masterpiece, and why it's prized by master carvers.",
+            image: "images-2.jpeg",
+            author: "Master Ramesh Khatri",
+            date: "Jan 15, 2024",
+            readTime: "5 min read",
+            content: "Teak wood has been the cornerstone of Indian wood carving for centuries. Its rich golden-brown color, exceptional durability, and natural oils make it the perfect medium for intricate carvings. In our workshop, we source teak from sustainable forests, ensuring each piece tells a story of both craftsmanship and environmental responsibility. The grain patterns in teak are like fingerprints - no two pieces are ever the same. This uniqueness is what makes each carved piece truly one-of-a-kind. Master carvers can spend weeks on a single teak panel, carefully following the wood's natural flow to create designs that seem to emerge from within the timber itself."
+          },
+          {
+            id: 2,
+            title: "The Language of Motifs",
+            excerpt: "Every carved pattern tells a story. Learn to read the ancient symbols and motifs in traditional wood carving.",
+            image: "images-3.jpeg",
+            author: "Master Kavita Joshi",
+            date: "Jan 10, 2024",
+            readTime: "7 min read",
+            content: "Traditional Indian wood carving is a language written in curves and lines. The lotus represents purity and enlightenment, while the peacock symbolizes beauty and grace. Geometric patterns like the mandala represent the universe and cosmic order. When you see a carved panel with intertwining vines, you're looking at the symbol of eternal life and growth. These motifs aren't just decorative - they carry deep cultural and spiritual meanings passed down through generations. As a woman in this traditionally male-dominated field, I've learned that understanding these symbols is key to preserving our heritage while creating contemporary pieces that speak to modern sensibilities."
+          },
+          {
+            id: 3,
+            title: "Tools of the Trade",
+            excerpt: "A master carver's toolkit is their most prized possession. Explore the essential tools that bring wood to life.",
+            image: "images-4.jpeg",
+            author: "Master Suresh Patil",
+            date: "Jan 5, 2024",
+            readTime: "6 min read",
+            content: "My grandfather's chisels are over 100 years old, and I still use them today. A carver's relationship with their tools is sacred. Each chisel, gouge, and mallet has its own personality and purpose. The V-tool creates crisp lines, while the gouge scoops out larger areas. The skew chisel is perfect for delicate details. But tools are nothing without the hands that wield them. It takes years to develop the muscle memory and sensitivity needed to feel the wood's resistance and know exactly how much pressure to apply. Modern power tools have their place, but for fine detail work, nothing beats hand tools that have been sharpened and maintained with care over decades."
+          },
+          {
+            id: 4,
+            title: "Restoring Heritage",
+            excerpt: "The delicate art of bringing century-old wooden artifacts back to their former glory.",
+            image: "images-5.jpeg",
+            author: "Master Arjun Desai",
+            date: "Dec 28, 2023",
+            readTime: "8 min read",
+            content: "Heritage restoration is detective work combined with artistry. When a 200-year-old temple door arrives at my workshop, I first spend days just studying it - understanding the original carver's techniques, identifying the wood species, and assessing the damage. Every crack, every worn edge tells a story. The goal isn't to make it look new, but to preserve its history while ensuring it lasts another 200 years. We use traditional methods and materials wherever possible. Modern adhesives might be stronger, but they can damage the wood over time. Instead, we use natural resins and traditional joinery techniques. It's painstaking work, but when you see a piece of history come back to life, it's worth every hour spent."
+          }
+        ];
+        
+        const mockOrders = [
+          {
+            id: 1,
+            orderNumber: "KAA20240115",
+            date: "Jan 15, 2024",
+            status: "delivered",
+            items: [
+              { name: "Handcarved Wooden Elephant", price: "₹2,500", image: "images-6.jpeg", artisan: "Master Ramesh Khatri" }
+            ],
+            total: "₹2,500",
+            shippingAddress: "123 Main Street, Bandra West, Mumbai - 400050",
+            trackingId: "TRK123456789",
+            estimatedDelivery: "Jan 20, 2024",
+            deliveredDate: "Jan 18, 2024"
+          },
+          {
+            id: 2,
+            orderNumber: "KAA20240110",
+            date: "Jan 10, 2024",
+            status: "shipped",
+            items: [
+              { name: "Traditional Door Panel", price: "₹3,200", image: "images-7.jpeg", artisan: "Master Suresh Patil" }
+            ],
+            total: "₹3,200",
+            shippingAddress: "456 Park Avenue, Worli, Mumbai - 400018",
+            trackingId: "TRK987654321",
+            estimatedDelivery: "Jan 17, 2024"
+          },
+          {
+            id: 3,
+            orderNumber: "KAA20240105",
+            date: "Jan 5, 2024",
+            status: "in-progress",
+            items: [
+              { name: "Floral Wooden Art", price: "₹2,100", image: "images-8.jpeg", artisan: "Master Kavita Joshi" }
+            ],
+            total: "₹2,100",
+            shippingAddress: "789 Beach Road, Bandra West, Mumbai - 400050",
+            estimatedDelivery: "Jan 15, 2024"
+          },
+          {
+            id: 4,
+            orderNumber: "KAA20231228",
+            date: "Dec 28, 2023",
+            status: "placed",
+            items: [
+              { name: "Miniature Wooden Figurine", price: "₹1,800", image: "images-9.jpeg", artisan: "Master Arjun Desai" }
+            ],
+            total: "₹1,800",
+            shippingAddress: "321 Hill View, Dharavi, Mumbai - 400017",
+            estimatedDelivery: "Jan 10, 2024"
+          }
+        ];
+        
+        // Main App Component
+        const App = () => {
+            const [currentPage, setCurrentPage] = useState('welcome');
+            const [isAuthenticated, setIsAuthenticated] = useState(false);
+            const [user, setUser] = useState(null);
+            const [onboardingStep, setOnboardingStep] = useState(1);
+            const [isScannerOpen, setIsScannerOpen] = useState(false);
+            const [connectTab, setConnectTab] = useState('artisans');
+            const [searchTerm, setSearchTerm] = useState('');
+            const [selectedCraft, setSelectedCraft] = useState('all');
+            const [selectedLocation, setSelectedLocation] = useState('all');
+            const [currentArtisan, setCurrentArtisan] = useState(null);
+            const [isCommissionOpen, setIsCommissionOpen] = useState(false);
+            const [selectedSpecialty, setSelectedSpecialty] = useState(null);
+            const [cart, setCart] = useState([]);
+            const [toast, setToast] = useState(null);
+            const [selectedBlog, setSelectedBlog] = useState(null);
+            const [selectedOrder, setSelectedOrder] = useState(null);
+            
+            // Toast notification function
+            const showToast = (message, type = 'success') => {
+                setToast({ message, type });
+                setTimeout(() => setToast(null), 3000);
+            };
+            
+            // Cart functions
+            const addToCart = (product) => {
+                const existingItem = cart.find(item => item.id === product.id);
+                if (!existingItem) {
+                    setCart([...cart, { ...product, quantity: 1, cartId: Date.now() }]);
+                    showToast('Added to cart!');
+                }
+            };
+            
+            const removeFromCart = (cartId) => {
+                setCart(cart.filter(item => item.cartId !== cartId));
+                showToast('Removed from cart', 'info');
+            };
+            
+            const getCartTotal = () => {
+                return cart.reduce((total, item) => {
+                    const price = parseInt(item.price.replace(/[₹,]/g, ''));
+                    return total + (price * item.quantity);
+                }, 0);
+            };
+            
+            // Welcome Screen
+            const WelcomeScreen = () => (
+                <div className="min-h-screen flex items-center justify-center p-6 fade-in" style={{
+                    background: 'radial-gradient(circle at 30% 30%, rgba(139, 69, 19, 0.18) 0%, transparent 45%), linear-gradient(135deg, #000000 0%, #1A1612 50%, #2D1B0E 100%)'
+                }}>
+                    <div className="max-w-md w-full text-center">
+                        <div className="premium-card rounded-3xl p-12 shadow-2xl">
+                            <div className="w-24 h-24 mx-auto mb-8 rounded-full flex items-center justify-center glow" style={{
+                                background: 'linear-gradient(135deg, #8B4513 0%, #CD853F 100%)'
+                            }}>
+                                <LucideIcon name="hammer" size={48} className="text-white" />
+                            </div>
+                            
+                            <h1 className="text-5xl font-serif font-bold text-primary mb-4">Kaarigar Connect</h1>
+                            <p className="text-secondary text-lg mb-8">Premium Wood Carving Platform</p>
+                            <div className="w-32 h-1 rounded-full mx-auto mb-12" style={{
+                                background: 'linear-gradient(90deg, #8B4513, #CD853F)'
+                            }}></div>
+                            
+                            <div className="space-y-4">
+                                <button 
+                                    onClick={() => {
+                                        setCurrentPage('onboarding');
+                                        setOnboardingStep(1);
+                                    }}
+                                    className="w-full btn-primary py-5 rounded-2xl text-lg font-bold"
+                                >
+                                    <div className="flex items-center justify-center gap-3">
+                                        <LucideIcon name="user-plus" size={24} />
+                                        <span>Sign Up as Artisan</span>
+                                    </div>
+                                </button>
+                                
+                                <button 
+                                    onClick={() => setCurrentPage('client-auth')}
+                                    className="w-full btn-secondary py-5 rounded-2xl text-lg font-bold"
+                                >
+                                    <div className="flex items-center justify-center gap-3">
+                                        <LucideIcon name="shopping-bag" size={24} />
+                                        <span>Continue as Client</span>
+                                    </div>
+                                </button>
+                                
+                                <button 
+                                    onClick={() => {
+                                        const artisan = mockArtisans[0];
+                                        setUser({ ...artisan, type: "artisan" });
+                                        setIsAuthenticated(true);
+                                        setCurrentPage('profile');
+                                    }}
+                                    className="w-full text-accent hover:text-accent-light py-3 text-sm font-medium transition-colors"
+                                >
+                                    Demo: Login as Artisan
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            );
+            
+            // Client Auth Screen
+            const ClientAuthScreen = () => {
+                const [authMode, setAuthMode] = useState('signin');
+                const [email, setEmail] = useState('client@kaarigar.com');
+                const [password, setPassword] = useState('password');
+                const [name, setName] = useState('');
+                
+                const handleSignIn = (e) => {
+                    e.preventDefault();
+                    setUser({ 
+                        name: name || "Client User", 
+                        email: email,
+                        type: "client", 
+                        avatar: "images-10.jpeg" 
+                    });
+                    setIsAuthenticated(true);
+                    setCurrentPage('home');
+                };
+                
+                return (
+                    <div className="min-h-screen flex items-center justify-center p-6 fade-in" style={{
+                        background: 'radial-gradient(circle at 30% 30%, rgba(139, 69, 19, 0.18) 0%, transparent 45%), linear-gradient(135deg, #000000 0%, #1A1612 50%, #2D1B0E 100%)'
+                    }}>
+                        <div className="max-w-md w-full">
+                            <div className="premium-card rounded-3xl p-8 shadow-2xl">
+                                <button 
+                                    onClick={() => setCurrentPage('welcome')}
+                                    className="flex items-center gap-2 text-accent hover:text-accent-light mb-6"
+                                >
+                                    <LucideIcon name="arrow-left" size={20} />
+                                    Back
+                                </button>
+                                
+                                <div className="text-center mb-8">
+                                    <h2 className="text-3xl font-serif font-bold text-primary mb-2">Client Access</h2>
+                                    <p className="text-secondary">Sign in or create an account</p>
+                                </div>
+                                
+                                {/* Toggle Buttons */}
+                                <div className="flex bg-surface rounded-2xl p-1 mb-6">
+                                    <button
+                                        onClick={() => setAuthMode('signin')}
+                                        className={`flex-1 py-3 px-6 rounded-xl font-bold transition-all ${
+                                            authMode === 'signin' 
+                                                ? 'bg-accent text-white' 
+                                                : 'text-secondary hover:text-primary'
+                                        }`}
+                                    >
+                                        Sign In
+                                    </button>
+                                    <button
+                                        onClick={() => setAuthMode('signup')}
+                                        className={`flex-1 py-3 px-6 rounded-xl font-bold transition-all ${
+                                            authMode === 'signup' 
+                                                ? 'bg-accent text-white' 
+                                                : 'text-secondary hover:text-primary'
+                                        }`}
+                                    >
+                                        Sign Up
+                                    </button>
+                                </div>
+                                
+                                <form onSubmit={handleSignIn} className="space-y-4">
+                                    {authMode === 'signup' && (
+                                        <div>
+                                            <label className="block text-primary font-semibold mb-2 text-sm">Full Name</label>
+                                            <input
+                                                type="text"
+                                                value={name}
+                                                onChange={(e) => setName(e.target.value)}
+                                                className="w-full p-4 rounded-xl bg-white text-gray-900 border border-white/10 focus:border-accent outline-none"
+                                                placeholder="Enter your name"
+                                                required={authMode === 'signup'}
+                                            />
+                                        </div>
+                                    )}
+                                    
+                                    <div>
+                                        <label className="block text-primary font-semibold mb-2 text-sm">Email</label>
+                                        <input
+                                            type="email"
+                                            value={email}
+                                            onChange={(e) => setEmail(e.target.value)}
+                                            className="w-full p-4 rounded-xl bg-white text-gray-900 border border-white/10 focus:border-accent outline-none"
+                                            placeholder="your.email@example.com"
+                                            required
+                                        />
+                                    </div>
+                                    
+                                    <div>
+                                        <label className="block text-primary font-semibold mb-2 text-sm">Password</label>
+                                        <input
+                                            type="password"
+                                            value={password}
+                                            onChange={(e) => setPassword(e.target.value)}
+                                            className="w-full p-4 rounded-xl bg-white text-gray-900 border border-white/10 focus:border-accent outline-none"
+                                            placeholder="Enter password"
+                                            required
+                                        />
+                                    </div>
+                                    
+                                    <button
+                                        type="submit"
+                                        className="w-full btn-primary py-4 rounded-xl font-bold text-lg"
+                                    >
+                                        {authMode === 'signin' ? 'Sign In' : 'Create Account'}
+                                    </button>
+                                    
+                                    {authMode === 'signin' && (
+                                        <p className="text-center text-secondary text-sm">
+                                            Demo credentials are pre-filled
+                                        </p>
+                                    )}
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                );
+            };
+            
+            // Multi-Step Onboarding
+            const OnboardingScreen = () => {
+                const [formData, setFormData] = useState({
+                    name: '', email: '', phone: '', location: '', experience: '', specialties: [], bio: ''
+                });
+                
+                const totalSteps = 3;
+                
+                const handleNext = () => {
+                    if (onboardingStep < totalSteps) {
+                        setOnboardingStep(onboardingStep + 1);
+                    } else {
+                        // Complete onboarding
+                        const newArtisan = {
+                            ...formData,
+                            id: Date.now(),
+                            type: "artisan",
+                            craft: "Wood Carver",
+                            verified: false,
+                            rating: 0,
+                            commissions: 0,
+                            earnings: "₹0",
+                            avatar: "images.jpeg"
+                        };
+                        setUser(newArtisan);
+                        setIsAuthenticated(true);
+                        setCurrentPage('profile');
+                    }
+                };
+                
+                return (
+                    <div className="min-h-screen flex items-center justify-center p-6 fade-in" style={{
+                        background: 'linear-gradient(135deg, #000000 0%, #1A1612 50%, #2D1B0E 100%)'
+                    }}>
+                        <div className="max-w-lg w-full">
+                            <div className="premium-card rounded-3xl p-8 shadow-2xl">
+                                <div className="mb-8">
+                                    <button 
+                                        onClick={() => onboardingStep > 1 ? setOnboardingStep(onboardingStep - 1) : setCurrentPage('welcome')}
+                                        className="text-accent hover:text-accent-light flex items-center gap-2 mb-6"
+                                    >
+                                        <LucideIcon name="arrow-left" size={20} />
+                                        <span>Back</span>
+                                    </button>
+                                    
+                                    <h2 className="text-3xl font-serif font-bold text-primary mb-2">
+                                        {onboardingStep === 1 && "Personal Information"}
+                                        {onboardingStep === 2 && "Professional Details"}
+                                        {onboardingStep === 3 && "Tell Your Story"}
+                                    </h2>
+                                    <p className="text-secondary mb-6">Step {onboardingStep} of {totalSteps}</p>
+                                    
+                                    <div className="step-indicator">
+                                        {[...Array(totalSteps)].map((_, i) => (
+                                            <div key={i} className={`step ${i < onboardingStep ? 'active' : ''}`}></div>
+                                        ))}
+                                    </div>
+                                </div>
+                                
+                                <div className="space-y-6 mb-8">
+                                    {onboardingStep === 1 && (
+                                        <>
+                                            <div>
+                                                <label className="block text-primary font-semibold mb-2">Full Name</label>
+                                                <input
+                                                    type="text"
+                                                    value={formData.name}
+                                                    onChange={(e) => setFormData({...formData, name: e.target.value})}
+                                                    className="w-full p-4 rounded-xl bg-white text-gray-900 border border-white/10 focus:border-accent outline-none"
+                                                    placeholder="Enter your full name"
+                                                />
+                                            </div>
+                                            <div>
+                                                <label className="block text-primary font-semibold mb-2">Email</label>
+                                                <input
+                                                    type="email"
+                                                    value={formData.email}
+                                                    onChange={(e) => setFormData({...formData, email: e.target.value})}
+                                                    className="w-full p-4 rounded-xl bg-white text-gray-900 border border-white/10 focus:border-accent outline-none"
+                                                    placeholder="your.email@example.com"
+                                                />
+                                            </div>
+                                            <div>
+                                                <label className="block text-primary font-semibold mb-2">Phone</label>
+                                                <input
+                                                    type="tel"
+                                                    value={formData.phone}
+                                                    onChange={(e) => setFormData({...formData, phone: e.target.value})}
+                                                    className="w-full p-4 rounded-xl bg-white text-gray-900 border border-white/10 focus:border-accent outline-none"
+                                                    placeholder="+91 98765 43210"
+                                                />
+                                            </div>
+                                        </>
+                                    )}
+                                    
+                                    {onboardingStep === 2 && (
+                                        <>
+                                            <div>
+                                                <label className="block text-primary font-semibold mb-2">Location</label>
+                                                <select
+                                                    value={formData.location}
+                                                    onChange={(e) => setFormData({...formData, location: e.target.value})}
+                                                    className="w-full p-4 rounded-xl bg-white text-gray-900 border border-white/10 focus:border-accent outline-none"
+                                                >
+                                                    <option value="">Select location</option>
+                                                    <option value="Bandra West">Bandra West</option>
+                                                    <option value="Byculla">Byculla</option>
+                                                    <option value="Dharavi">Dharavi</option>
+                                                    <option value="Worli">Worli</option>
+                                                    <option value="Mahim">Mahim</option>
+                                                    <option value="Andheri">Andheri</option>
+                                                </select>
+                                            </div>
+                                            <div>
+                                                <label className="block text-primary font-semibold mb-2">Years of Experience</label>
+                                                <input
+                                                    type="text"
+                                                    value={formData.experience}
+                                                    onChange={(e) => setFormData({...formData, experience: e.target.value})}
+                                                    className="w-full p-4 rounded-xl bg-white text-gray-900 border border-white/10 focus:border-accent outline-none"
+                                                    placeholder="e.g., 15 years"
+                                                />
+                                            </div>
+                                            <div>
+                                                <label className="block text-primary font-semibold mb-2">Specialties</label>
+                                                <div className="grid grid-cols-2 gap-3">
+                                                    {["Temple Architecture", "Furniture Design", "Decorative Panels", "Heritage Restoration"].map(spec => (
+                                                        <button
+                                                            key={spec}
+                                                            onClick={() => {
+                                                                const specs = formData.specialties.includes(spec)
+                                                                    ? formData.specialties.filter(s => s !== spec)
+                                                                    : [...formData.specialties, spec];
+                                                                setFormData({...formData, specialties: specs});
+                                                            }}
+                                                            className={`p-3 rounded-xl border transition-all ${
+                                                                formData.specialties.includes(spec)
+                                                                    ? 'bg-accent border-accent text-white'
+                                                                    : 'bg-surface border-white/10 text-secondary hover:border-accent'
+                                                            }`}
+                                                        >
+                                                            {spec}
+                                                        </button>
+                                                    ))}
+                                                </div>
+                                            </div>
+                                        </>
+                                    )}
+                                    
+                                    {onboardingStep === 3 && (
+                                        <div>
+                                            <label className="block text-primary font-semibold mb-2">Your Story</label>
+                                            <textarea
+                                                value={formData.bio}
+                                                onChange={(e) => setFormData({...formData, bio: e.target.value})}
+                                                className="w-full p-4 rounded-xl bg-white text-gray-900 border border-white/10 focus:border-accent outline-none resize-none"
+                                                rows="6"
+                                                placeholder="Tell us about your journey as a wood carver..."
+                                            />
+                                        </div>
+                                    )}
+                                </div>
+                                
+                                <button 
+                                    onClick={handleNext}
+                                    className="w-full btn-primary py-4 rounded-xl text-lg font-bold"
+                                >
+                                    {onboardingStep === totalSteps ? 'Complete Setup' : 'Continue'}
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                );
+            };
+            
+            // Camera Scanner Modal
+            const CameraScanner = () => {
+                const [scanning, setScanning] = useState(true);
+                
+                useEffect(() => {
+                    if (isScannerOpen) {
+                        setScanning(true);
+                        const timer = setTimeout(() => {
+                            setScanning(false);
+                            setTimeout(() => {
+                                setIsScannerOpen(false);
+                                setCurrentArtisan(mockArtisans[0]);
+                                setCurrentPage('artisan-profile');
+                            }, 1000);
+                        }, 3000);
+                        return () => clearTimeout(timer);
+                    }
+                }, [isScannerOpen]);
+                
+                if (!isScannerOpen) return null;
+                
+                return (
+                    <div className="camera-view">
+                        <div className="text-center mb-8">
+                            <h2 className="text-3xl font-serif font-bold text-white mb-2">Scan Kaarigar Mark</h2>
+                            <p className="text-white/70">Point camera at the QR code</p>
+                        </div>
+                        
+                        <div className="scanner-frame">
+                            {scanning && <div className="scanner-line"></div>}
+                            <div className="scanner-corners">
+                                <div className="corner corner-tl"></div>
+                                <div className="corner corner-tr"></div>
+                                <div className="corner corner-bl"></div>
+                                <div className="corner corner-br"></div>
+                            </div>
+                            
+                            {!scanning && (
+                                <div className="absolute inset-0 flex items-center justify-center bg-black/50">
+                                    <div className="text-center">
+                                        <LucideIcon name="check-circle" size={64} className="text-green-500 mx-auto mb-4" />
+                                        <p className="text-white font-bold text-xl">Verified!</p>
+                                    </div>
+                                </div>
+                            )}
+                        </div>
+                        
+                        <button 
+                            onClick={() => setIsScannerOpen(false)}
+                            className="mt-8 px-8 py-3 bg-white/10 text-white rounded-xl hover:bg-white/20 transition-all"
+                        >
+                            Cancel
+                        </button>
+                    </div>
+                );
+            };
+            
+            // Bento Grid Dashboard (Artisan Profile)
+            const BentoDashboard = () => {
+                if (!user || user.type !== 'artisan') return null;
+                
+                return (
+                    <div className="pb-24 min-h-screen" style={{
+                        background: 'linear-gradient(135deg, #0A0A0A 0%, #1A1612 50%, #2D1B0E 100%)'
+                    }}>
+                        {/* Header */}
+                        <div className="glass p-6 mb-6">
+                            <div className="flex items-center gap-4">
+                                <img 
+                                    src={user.avatar || user.profileImage} 
+                                    alt={user.name}
+                                    className="w-20 h-20 rounded-2xl object-cover"
+                                />
+                                <div className="flex-1">
+                                    <h1 className="text-2xl font-serif font-bold text-primary mb-1">{user.name}</h1>
+                                    <p className="text-secondary">{user.craft} • {user.location}</p>
+                                    {user.verified && (
+                                        <div className="flex items-center gap-2 mt-2">
+                                            <LucideIcon name="badge-check" size={16} className="text-accent" />
+                                            <span className="text-accent text-sm font-semibold">Verified Master</span>
+                                        </div>
+                                    )}
+                                </div>
+                            </div>
+                        </div>
+                        
+                        {/* Bento Grid */}
+                        <div className="bento-grid">
+                            {/* Earnings Card */}
+                            <div className="bento-item">
+                                <div className="flex items-center justify-between mb-4">
+                                    <LucideIcon name="trending-up" size={24} className="text-accent" />
+                                    <span className="text-xs text-secondary">This Month</span>
+                                </div>
+                                <h3 className="text-3xl font-bold text-primary mb-1">{user.earnings || "₹0"}</h3>
+                                <p className="text-secondary text-sm">Total Earnings</p>
+                            </div>
+                            
+                            {/* Commissions Card */}
+                            <div className="bento-item">
+                                <div className="flex items-center justify-between mb-4">
+                                    <LucideIcon name="briefcase" size={24} className="text-accent" />
+                                    <span className="text-xs text-secondary">Active</span>
+                                </div>
+                                <h3 className="text-3xl font-bold text-primary mb-1">{user.commissions || 0}</h3>
+                                <p className="text-secondary text-sm">Commissions</p>
+                            </div>
+                            
+                            {/* Rating Card */}
+                            <div className="bento-item">
+                                <div className="flex items-center justify-between mb-4">
+                                    <LucideIcon name="star" size={24} className="text-accent" />
+                                    <span className="text-xs text-secondary">Rating</span>
+                                </div>
+                                <h3 className="text-3xl font-bold text-primary mb-1">{user.rating || "N/A"}</h3>
+                                <p className="text-secondary text-sm">Average Rating</p>
+                            </div>
+                            
+                            {/* Products Card */}
+                            <div className="bento-item">
+                                <div className="flex items-center justify-between mb-4">
+                                    <LucideIcon name="package" size={24} className="text-accent" />
+                                    <span className="text-xs text-secondary">Listed</span>
+                                </div>
+                                <h3 className="text-3xl font-bold text-primary mb-1">
+                                    {mockProducts.filter(p => p.artisanId === user.id).length}
+                                </h3>
+                                <p className="text-secondary text-sm">Products</p>
+                            </div>
+                            
+                            {/* Recent Activity - Large Card */}
+                            <div className="bento-item bento-large">
+                                <div className="flex items-center justify-between mb-6">
+                                    <h3 className="text-xl font-serif font-bold text-primary">Recent Activity</h3>
+                                    <LucideIcon name="activity" size={20} className="text-accent" />
+                                </div>
+                                <div className="space-y-4">
+                                    {[
+                                        { icon: "shopping-cart", text: "New order received", time: "2 hours ago" },
+                                        { icon: "message-circle", text: "Client message", time: "5 hours ago" },
+                                        { icon: "star", text: "New 5-star review", time: "1 day ago" }
+                                    ].map((activity, i) => (
+                                        <div key={i} className="flex items-center gap-4 p-3 rounded-xl bg-surface/50">
+                                            <LucideIcon name={activity.icon} size={20} className="text-accent" />
+                                            <div className="flex-1">
+                                                <p className="text-primary font-medium">{activity.text}</p>
+                                                <p className="text-secondary text-xs">{activity.time}</p>
+                                            </div>
+                                        </div>
+                                    ))}
+                                </div>
+                            </div>
+                            
+                            {/* Quick Actions */}
+                            <div className="bento-item bento-large">
+                                <h3 className="text-xl font-serif font-bold text-primary mb-6">Quick Actions</h3>
+                                <div className="grid grid-cols-2 gap-3">
+                                    <button 
+                                        onClick={() => alert('Add Product feature coming soon!')}
+                                        className="btn-primary py-4 rounded-xl flex items-center justify-center gap-2"
+                                    >
+                                        <LucideIcon name="plus" size={20} />
+                                        <span>Add Product</span>
+                                    </button>
+                                    <button 
+                                        onClick={() => {
+                                            setCurrentArtisan(user);
+                                            setCurrentPage('artisan-profile');
+                                        }}
+                                        className="btn-secondary py-4 rounded-xl flex items-center justify-center gap-2"
+                                    >
+                                        <LucideIcon name="eye" size={20} />
+                                        <span>View Profile</span>
+                                    </button>
+                                    <button 
+                                        onClick={() => setCurrentPage('artisan-settings')}
+                                        className="btn-secondary py-4 rounded-xl flex items-center justify-center gap-2"
+                                    >
+                                        <LucideIcon name="settings" size={20} />
+                                        <span>Settings</span>
+                                    </button>
+                                    <button 
+                                        onClick={() => alert('Help: Contact support@kaarigar.com or call +91 98765 00000')}
+                                        className="btn-secondary py-4 rounded-xl flex items-center justify-center gap-2"
+                                    >
+                                        <LucideIcon name="help-circle" size={20} />
+                                        <span>Help</span>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                );
+            };
+            
+            // Connect Page (Artisans & Partners)
+            const ConnectPage = () => (
+                <div className="pb-24 min-h-screen" style={{
+                    background: 'linear-gradient(135deg, #0A0A0A 0%, #1A1612 50%, #2D1B0E 100%)'
+                }}>
+                    <div className="glass p-6 mb-6">
+                        <h1 className="text-3xl font-serif font-bold text-primary mb-4">Connect & Collaborate</h1>
+                        <p className="text-secondary">Find fellow artisans or verified partners</p>
+                    </div>
+                    
+                    {/* Toggle Tabs */}
+                    <div className="px-6 mb-6">
+                        <div className="glass rounded-2xl p-2 flex gap-2">
+                            <button
+                                onClick={() => setConnectTab('artisans')}
+                                className={`flex-1 py-3 rounded-xl font-semibold transition-all ${
+                                    connectTab === 'artisans'
+                                        ? 'bg-accent text-white'
+                                        : 'text-secondary hover:text-primary'
+                                }`}
+                            >
+                                <div className="flex items-center justify-center gap-2">
+                                    <LucideIcon name="users" size={20} />
+                                    <span>Fellow Artisans</span>
+                                </div>
+                            </button>
+                            <button
+                                onClick={() => setConnectTab('partners')}
+                                className={`flex-1 py-3 rounded-xl font-semibold transition-all ${
+                                    connectTab === 'partners'
+                                        ? 'bg-accent text-white'
+                                        : 'text-secondary hover:text-primary'
+                                }`}
+                            >
+                                <div className="flex items-center justify-center gap-2">
+                                    <LucideIcon name="handshake" size={20} />
+                                    <span>Verified Partners</span>
+                                </div>
+                            </button>
+                        </div>
+                    </div>
+                    
+                    {/* Content */}
+                    <div className="px-6">
+                        {connectTab === 'artisans' ? (
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                {mockArtisans.map(artisan => (
+                                    <div key={artisan.id} className="premium-card rounded-2xl p-6 hover:scale-105 transition-transform cursor-pointer">
+                                        <div className="flex items-start gap-4 mb-4">
+                                            <img 
+                                                src={artisan.profileImage} 
+                                                alt={artisan.name}
+                                                className="w-16 h-16 rounded-xl object-cover"
+                                            />
+                                            <div className="flex-1">
+                                                <h3 className="font-serif font-bold text-primary mb-1">{artisan.name}</h3>
+                                                <p className="text-secondary text-sm">{artisan.craft}</p>
+                                                <div className="flex items-center gap-2 mt-2">
+                                                    <LucideIcon name="map-pin" size={14} className="text-accent" />
+                                                    <span className="text-secondary text-xs">{artisan.location}</span>
+                                                </div>
+                                            </div>
+                                            {artisan.verified && (
+                                                <LucideIcon name="badge-check" size={20} className="text-accent" />
+                                            )}
+                                        </div>
+                                        <div className="flex gap-2">
+                                            <button className="flex-1 btn-primary py-2 rounded-lg text-sm">
+                                                Connect
+                                            </button>
+                                            <button className="btn-secondary py-2 px-4 rounded-lg">
+                                                <LucideIcon name="message-circle" size={18} />
+                                            </button>
+                                        </div>
+                                    </div>
+                                ))}
+                            </div>
+                        ) : (
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                {mockPartners.map(partner => (
+                                    <div key={partner.id} className="premium-card rounded-2xl p-6 hover:scale-105 transition-transform cursor-pointer">
+                                        <div className="flex items-start justify-between mb-4">
+                                            <div>
+                                                <h3 className="font-serif font-bold text-primary mb-1">{partner.name}</h3>
+                                                <p className="text-secondary text-sm">{partner.type}</p>
+                                                <div className="flex items-center gap-2 mt-2">
+                                                    <LucideIcon name="map-pin" size={14} className="text-accent" />
+                                                    <span className="text-secondary text-xs">{partner.location}</span>
+                                                </div>
+                                            </div>
+                                            {partner.verified && (
+                                                <LucideIcon name="shield-check" size={24} className="text-accent" />
+                                            )}
+                                        </div>
+                                        <div className="flex items-center gap-4 mb-4">
+                                            <div className="flex items-center gap-1">
+                                                <LucideIcon name="star" size={16} className="text-accent" />
+                                                <span className="text-primary font-semibold">{partner.rating}</span>
+                                            </div>
+                                            <div className="text-secondary text-sm">{partner.deals} deals</div>
+                                        </div>
+                                        <button className="w-full btn-primary py-2 rounded-lg text-sm">
+                                            Request Partnership
+                                        </button>
+                                    </div>
+                                ))}
+                            </div>
+                        )}
+                    </div>
+                </div>
+            );
+            
+            // Home Page
+            const HomePage = () => {
+                // Filter artisans and products based on search
+                const filteredArtisans = mockArtisans.filter(artisan =>
+                    searchTerm === '' ||
+                    artisan.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                    artisan.craft.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                    artisan.location.toLowerCase().includes(searchTerm.toLowerCase())
+                );
+                
+                const filteredProducts = mockProducts.filter(product =>
+                    searchTerm === '' ||
+                    product.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                    product.artisanName.toLowerCase().includes(searchTerm.toLowerCase())
+                );
+                
+                return (
+                <div className="pb-24 min-h-screen page-bg">
+                    <div className="premium-card mx-4 mt-6 p-8 rounded-3xl">
+                        <div className="flex items-center justify-between mb-6">
+                            <div>
+                                <h1 className="text-3xl font-serif font-bold text-primary mb-2">
+                                    Welcome, {user?.name?.split(' ')[0] || 'Guest'}! ✨
+                                </h1>
+                                <p className="text-secondary">Discover authentic wood carving</p>
+                            </div>
+                            <div className="flex items-center gap-3">
+                                <button className="p-3 rounded-xl bg-surface/50 hover:bg-surface transition-all">
+                                    <LucideIcon name="bell" size={24} className="text-accent" />
+                                </button>
+                                <button 
+                                    onClick={() => setCurrentPage('cart')}
+                                    className="relative p-3 rounded-xl bg-surface/50 hover:bg-surface transition-all"
+                                >
+                                    <LucideIcon name="shopping-cart" size={24} className="text-accent" />
+                                    {cart.length > 0 && (
+                                        <div className="absolute -top-1 -right-1 bg-red-500 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center font-bold">
+                                            {cart.length}
+                                        </div>
+                                    )}
+                                </button>
+                            </div>
+                        </div>
+                        
+                        <div className="relative">
+                            <LucideIcon name="search" size={20} className="absolute left-4 top-4 text-dim" />
+                            <input
+                                type="text"
+                                placeholder="Search artisans, products..."
+                                value={searchTerm}
+                                onChange={(e) => setSearchTerm(e.target.value)}
+                                className="w-full pl-12 pr-4 py-4 rounded-2xl bg-white text-gray-900 border border-white/10 focus:border-accent outline-none"
+                            />
+                        </div>
+                    </div>
+                    
+                    {/* Wood Carving Specialties */}
+                    <div className="px-6 py-8">
+                        <h2 className="text-2xl font-serif font-bold text-primary mb-6 flex items-center gap-3">
+                            <LucideIcon name="hammer" size={28} className="text-accent" />
+                            Wood Carving Specialties
+                        </h2>
+                        <div className="grid grid-cols-2 gap-4">
+                            {[
+                                { name: "Temple Architecture", icon: "church", desc: "Sacred designs & traditional temple motifs" },
+                                { name: "Furniture Design", icon: "armchair", desc: "Custom wooden furniture & interiors" },
+                                { name: "Decorative Panels", icon: "frame", desc: "Artistic wall panels & decorative pieces" },
+                                { name: "Heritage Restoration", icon: "landmark", desc: "Antique wood restoration & preservation" }
+                            ].map((specialty, i) => (
+                                <div 
+                                    key={i} 
+                                    onClick={() => {
+                                        setSelectedSpecialty(specialty);
+                                        setCurrentPage('specialty-detail');
+                                    }}
+                                    className="premium-card rounded-2xl p-6 text-center hover:scale-105 transition-transform cursor-pointer"
+                                >
+                                    <LucideIcon name={specialty.icon} size={32} className="text-accent mx-auto mb-3" />
+                                    <h3 className="font-serif font-bold text-primary text-sm mb-2">{specialty.name}</h3>
+                                    <p className="text-secondary text-xs">{specialty.desc}</p>
+                                </div>
+                            ))}
+                        </div>
+                    </div>
+                    
+                    {/* Search Results for Artisans */}
+                    {searchTerm && filteredArtisans.length > 0 && (
+                        <div className="px-6 py-8">
+                            <h2 className="text-2xl font-serif font-bold text-primary mb-6">
+                                Artisans ({filteredArtisans.length} results)
+                            </h2>
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                {filteredArtisans.map(artisan => (
+                                    <div
+                                        key={artisan.id}
+                                        className="premium-card rounded-2xl overflow-hidden cursor-pointer hover:scale-105 transition-transform"
+                                        onClick={() => {
+                                            setCurrentArtisan(artisan);
+                                            setCurrentPage('artisan-profile');
+                                        }}
+                                    >
+                                        <div className="relative">
+                                            <img 
+                                                src={artisan.profileImage} 
+                                                alt={artisan.name}
+                                                className="w-full h-48 object-cover"
+                                            />
+                                            {artisan.verified && (
+                                                <div className="absolute top-3 right-3 bg-accent text-white px-3 py-1 rounded-full text-xs flex items-center gap-1">
+                                                    <LucideIcon name="badge-check" size={14} />
+                                                    Verified
+                                                </div>
+                                            )}
+                                        </div>
+                                        <div className="p-5">
+                                            <h3 className="font-serif font-bold text-primary text-lg mb-1">{artisan.name}</h3>
+                                            <p className="text-secondary text-sm mb-3">{artisan.craft}</p>
+                                            <div className="flex items-center justify-between">
+                                                <div className="flex items-center gap-2">
+                                                    <LucideIcon name="map-pin" size={14} className="text-accent" />
+                                                    <span className="text-secondary text-xs">{artisan.location}</span>
+                                                </div>
+                                                <div className="flex items-center gap-1">
+                                                    <LucideIcon name="star" size={14} className="text-accent" />
+                                                    <span className="text-primary text-sm font-semibold">{artisan.rating}</span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                ))}
+                            </div>
+                        </div>
+                    )}
+                    
+                    {/* Featured Artisan */}
+                    {!searchTerm && (
+                        <div className="px-6 py-8">
+                            <h2 className="text-2xl font-serif font-bold text-primary mb-6">Featured Master</h2>
+                        <div 
+                            className="premium-card rounded-3xl overflow-hidden cursor-pointer hover:scale-105 transition-transform"
+                            onClick={() => {
+                                setCurrentArtisan(mockArtisans[0]);
+                                setCurrentPage('artisan-profile');
+                            }}
+                        >
+                            <div className="relative">
+                                <img 
+                                    src={mockArtisans[0].profileImage} 
+                                    alt={mockArtisans[0].name}
+                                    className="w-full h-64 object-cover"
+                                />
+                                <div className="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent"></div>
+                                <div className="absolute bottom-4 left-4 right-4">
+                                    <h3 className="text-2xl font-serif font-bold text-white mb-2">{mockArtisans[0].name}</h3>
+                                    <p className="text-white/90">{mockArtisans[0].craft} • {mockArtisans[0].experience}</p>
+                                </div>
+                            </div>
+                            <div className="p-6">
+                                <p className="text-secondary italic mb-4">"{mockArtisans[0].story.substring(0, 120)}..."</p>
+                                <div className="flex items-center justify-between">
+                                    <div className="flex items-center gap-2">
+                                        <LucideIcon name="star" size={20} className="text-accent" />
+                                        <span className="text-primary font-bold">{mockArtisans[0].rating}</span>
+                                    </div>
+                                    <button className="text-accent font-semibold flex items-center gap-2">
+                                        View Profile
+                                        <LucideIcon name="arrow-right" size={18} />
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                        </div>
+                    )}
+                    
+                    {/* Products */}
+                    <div className="px-6 py-8">
+                        <h2 className="text-2xl font-serif font-bold text-primary mb-6">
+                            Marketplace {searchTerm && `(${filteredProducts.length} results)`}
+                        </h2>
+                        {filteredProducts.length === 0 && searchTerm ? (
+                            <div className="premium-card rounded-2xl p-12 text-center">
+                                <LucideIcon name="search" size={64} className="text-dim mx-auto mb-4" />
+                                <h3 className="text-xl font-serif font-bold text-primary mb-2">No products found</h3>
+                                <p className="text-secondary">Try searching for something else</p>
+                            </div>
+                        ) : (
+                            <div className="flex gap-6 overflow-x-auto pb-4 custom-scrollbar">
+                                {filteredProducts.map(product => {
+                                const inCart = cart.some(item => item.id === product.id);
+                                return (
+                                    <div key={product.id} className="flex-shrink-0 w-72 premium-card rounded-2xl overflow-hidden hover:scale-105 transition-transform">
+                                        <img src={product.image} alt={product.name} className="w-full h-48 object-cover" />
+                                        <div className="p-4">
+                                            <h4 className="font-serif font-bold text-primary mb-2">{product.name}</h4>
+                                            <p className="text-secondary text-sm mb-3">by {product.artisanName}</p>
+                                            <div className="flex items-center justify-between">
+                                                <span className="text-accent font-bold text-xl">{product.price}</span>
+                                                <button 
+                                                    onClick={() => addToCart(product)}
+                                                    disabled={inCart}
+                                                    className={`py-2 px-4 rounded-lg text-sm font-semibold transition-all ${
+                                                        inCart 
+                                                            ? 'bg-green-500/20 text-green-500 cursor-not-allowed' 
+                                                            : 'btn-primary'
+                                                    }`}
+                                                >
+                                                    {inCart ? (
+                                                        <span className="flex items-center gap-2">
+                                                            <LucideIcon name="check" size={16} />
+                                                            Added
+                                                        </span>
+                                                    ) : 'Add to Cart'}
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                );
+                            })}
+                            </div>
+                        )}
+                    </div>
+                    
+                    {/* Blog Section */}
+                    <div className="px-6 py-8">
+                        <h2 className="text-2xl font-serif font-bold text-primary mb-6 flex items-center gap-3">
+                            <LucideIcon name="book-open" size={28} className="text-accent" />
+                            From the Workshop
+                        </h2>
+                        <div className="flex gap-6 overflow-x-auto pb-4 custom-scrollbar">
+                            {mockBlogs.map(blog => (
+                                <div 
+                                    key={blog.id} 
+                                    className="flex-shrink-0 w-80 premium-card rounded-2xl overflow-hidden hover:scale-105 transition-transform cursor-pointer"
+                                    onClick={() => {
+                                        setSelectedBlog(blog);
+                                        setCurrentPage('blog-detail');
+                                    }}
+                                >
+                                    <img src={blog.image} alt={blog.title} className="w-full h-48 object-cover" />
+                                    <div className="p-6">
+                                        <div className="flex items-center gap-3 mb-3">
+                                            <span className="text-accent text-xs font-semibold">{blog.readTime}</span>
+                                            <span className="text-dim text-xs">•</span>
+                                            <span className="text-secondary text-xs">{blog.date}</span>
+                                        </div>
+                                        <h4 className="font-serif font-bold text-primary text-lg mb-3">{blog.title}</h4>
+                                        <p className="text-secondary text-sm mb-4 line-clamp-2">{blog.excerpt}</p>
+                                        <div className="flex items-center justify-between">
+                                            <span className="text-dim text-xs">by {blog.author}</span>
+                                            <button className="text-accent font-semibold text-sm flex items-center gap-2">
+                                                Read More
+                                                <LucideIcon name="arrow-right" size={16} />
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                            ))}
+                        </div>
+                    </div>
+                    
+                    {/* Testimonials Section */}
+                    <div className="px-6 py-8">
+                        <h2 className="text-2xl font-serif font-bold text-primary mb-6">What Our Clients Say</h2>
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            {[
+                                { name: "Priya Sharma", role: "Interior Designer", text: "The craftsmanship is exceptional. Every piece tells a story and adds character to my projects.", rating: 5 },
+                                { name: "Rajesh Kumar", role: "Homeowner", text: "I commissioned a custom door panel and the result exceeded all expectations. True artistry!", rating: 5 }
+                            ].map((testimonial, i) => (
+                                <div key={i} className="premium-card rounded-2xl p-6">
+                                    <div className="flex items-center gap-1 mb-4">
+                                        {[...Array(testimonial.rating)].map((_, j) => (
+                                            <LucideIcon key={j} name="star" size={16} className="text-accent" />
+                                        ))}
+                                    </div>
+                                    <p className="text-secondary italic mb-4">"{testimonial.text}"</p>
+                                    <div>
+                                        <p className="text-primary font-semibold">{testimonial.name}</p>
+                                        <p className="text-dim text-sm">{testimonial.role}</p>
+                                    </div>
+                                </div>
+                            ))}
+                        </div>
+                    </div>
+                </div>
+            );
+            };
+            
+            // Artisans Directory Page
+            const ArtisansPage = () => {
+                const filteredArtisans = mockArtisans.filter(artisan => {
+                    const matchesSearch = artisan.name.toLowerCase().includes(searchTerm.toLowerCase());
+                    const matchesCraft = selectedCraft === 'all' || artisan.craft === selectedCraft;
+                    const matchesLocation = selectedLocation === 'all' || artisan.location === selectedLocation;
+                    return matchesSearch && matchesCraft && matchesLocation;
+                });
+                
+                return (
+                    <div className="pb-24 min-h-screen" style={{
+                        background: 'linear-gradient(135deg, #0A0A0A 0%, #1A1612 50%, #2D1B0E 100%)'
+                    }}>
+                        <div className="glass p-6 mb-6">
+                            <h1 className="text-3xl font-serif font-bold text-primary mb-4">Artisan Directory</h1>
+                            <p className="text-secondary mb-6">Discover verified wood carvers</p>
+                            
+                            {/* Filters */}
+                            <div className="space-y-4">
+                                <div>
+                                    <label className="block text-sm font-semibold text-primary mb-3">Craft</label>
+                                    <div className="flex flex-wrap gap-2">
+                                        {['all', 'Wood Carver'].map(craft => (
+                                            <button
+                                                key={craft}
+                                                onClick={() => setSelectedCraft(craft)}
+                                                className={`px-4 py-2 rounded-full text-sm font-medium transition-all ${
+                                                    selectedCraft === craft
+                                                        ? 'bg-accent text-white'
+                                                        : 'bg-white text-gray-900 hover:bg-accent/20'
+                                                }`}
+                                            >
+                                                {craft === 'all' ? 'All Crafts' : craft}
+                                            </button>
+                                        ))}
+                                    </div>
+                                </div>
+                                
+                                <div>
+                                    <label className="block text-sm font-semibold text-primary mb-3">Location</label>
+                                    <div className="flex flex-wrap gap-2">
+                                        {['all', 'Bandra West', 'Byculla', 'Dharavi', 'Worli', 'Mahim', 'Andheri'].map(location => (
+                                            <button
+                                                key={location}
+                                                onClick={() => setSelectedLocation(location)}
+                                                className={`px-4 py-2 rounded-full text-sm font-medium transition-all ${
+                                                    selectedLocation === location
+                                                        ? 'bg-accent text-white'
+                                                        : 'bg-white text-gray-900 hover:bg-accent/20'
+                                                }`}
+                                            >
+                                                {location === 'all' ? 'All Locations' : location}
+                                            </button>
+                                        ))}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div className="px-6">
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                {filteredArtisans.map(artisan => (
+                                    <div
+                                        key={artisan.id}
+                                        className="premium-card rounded-2xl overflow-hidden cursor-pointer hover:scale-105 transition-transform"
+                                        onClick={() => {
+                                            setCurrentArtisan(artisan);
+                                            setCurrentPage('artisan-profile');
+                                        }}
+                                    >
+                                        <div className="relative">
+                                            <img 
+                                                src={artisan.profileImage} 
+                                                alt={artisan.name}
+                                                className="w-full h-48 object-cover"
+                                            />
+                                            {artisan.verified && (
+                                                <div className="absolute top-3 right-3 bg-accent text-white px-3 py-1 rounded-full text-xs flex items-center gap-1">
+                                                    <LucideIcon name="badge-check" size={14} />
+                                                    Verified
+                                                </div>
+                                            )}
+                                        </div>
+                                        <div className="p-5">
+                                            <h3 className="font-serif font-bold text-primary text-lg mb-1">{artisan.name}</h3>
+                                            <p className="text-secondary text-sm mb-3">{artisan.craft}</p>
+                                            <div className="flex items-center justify-between">
+                                                <div className="flex items-center gap-2">
+                                                    <LucideIcon name="map-pin" size={14} className="text-accent" />
+                                                    <span className="text-secondary text-xs">{artisan.location}</span>
+                                                </div>
+                                                <div className="flex items-center gap-1">
+                                                    <LucideIcon name="star" size={14} className="text-accent" />
+                                                    <span className="text-primary text-sm font-semibold">{artisan.rating}</span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                ))}
+                            </div>
+                        </div>
+                    </div>
+                );
+            };
+            
+            // Artisan Profile Page
+            const ArtisanProfilePage = () => {
+                if (!currentArtisan) return null;
+                
+                return (
+                    <div className="pb-24 min-h-screen" style={{
+                        background: 'linear-gradient(135deg, #0A0A0A 0%, #1A1612 50%, #2D1B0E 100%)'
+                    }}>
+                        <div className="glass p-6">
+                            <button
+                                onClick={() => setCurrentPage('artisans')}
+                                className="flex items-center gap-2 text-accent hover:text-accent-light mb-6"
+                            >
+                                <LucideIcon name="arrow-left" size={20} />
+                                Back
+                            </button>
+                            
+                            <div className="flex items-start gap-6">
+                                <div className="relative">
+                                    <img
+                                        src={currentArtisan.profileImage}
+                                        alt={currentArtisan.name}
+                                        className="w-32 h-32 rounded-3xl object-cover"
+                                    />
+                                    {currentArtisan.verified && (
+                                        <div className="absolute -bottom-2 -right-2 bg-accent rounded-full p-3">
+                                            <LucideIcon name="badge-check" size={16} className="text-white" />
+                                        </div>
+                                    )}
+                                </div>
+                                
+                                <div className="flex-1">
+                                    <h1 className="text-3xl font-serif font-bold text-primary mb-2">{currentArtisan.name}</h1>
+                                    <p className="text-secondary mb-4">{currentArtisan.craft} • {currentArtisan.location}</p>
+                                    <div className="flex items-center gap-4 mb-4">
+                                        <div className="flex items-center gap-1">
+                                            {[...Array(5)].map((_, i) => (
+                                                <LucideIcon 
+                                                    key={i} 
+                                                    name="star" 
+                                                    size={18} 
+                                                    className={i < Math.floor(currentArtisan.rating) ? 'text-accent' : 'text-dim'}
+                                                />
+                                            ))}
+                                        </div>
+                                        <span className="text-primary font-semibold">{currentArtisan.rating}</span>
+                                        <span className="text-secondary">• {currentArtisan.experience}</span>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div className="flex gap-4 mt-8">
+                                <button
+                                    onClick={() => setIsCommissionOpen(true)}
+                                    className="flex-1 btn-primary py-4 rounded-2xl font-bold"
+                                >
+                                    Hire for Custom Work
+                                </button>
+                                <button className="btn-secondary py-4 px-6 rounded-2xl">
+                                    <LucideIcon name="message-circle" size={24} />
+                                </button>
+                            </div>
+                        </div>
+                        
+                        {/* Contact Info */}
+                        <div className="glass mx-6 my-4 p-6 rounded-2xl">
+                            <h3 className="font-serif font-bold text-primary mb-4">Contact</h3>
+                            <div className="space-y-3">
+                                <div className="flex items-center gap-3">
+                                    <LucideIcon name="phone" size={20} className="text-accent" />
+                                    <span className="text-primary">{currentArtisan.phone}</span>
+                                </div>
+                                <div className="flex items-center gap-3">
+                                    <LucideIcon name="mail" size={20} className="text-accent" />
+                                    <span className="text-primary">{currentArtisan.email}</span>
+                                </div>
+                                <div className="flex items-center gap-3">
+                                    <LucideIcon name="map-pin" size={20} className="text-accent" />
+                                    <span className="text-primary">{currentArtisan.workshopLocation}</span>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        {/* Story */}
+                        <div className="glass mx-6 my-4 p-6 rounded-2xl">
+                            <h2 className="text-2xl font-serif font-bold text-primary mb-4">My Story</h2>
+                            <p className="text-secondary italic leading-relaxed">"{currentArtisan.story}"</p>
+                        </div>
+                        
+                        {/* Portfolio */}
+                        <div className="glass mx-6 my-4 p-6 rounded-2xl">
+                            <h2 className="text-2xl font-serif font-bold text-primary mb-6">Portfolio</h2>
+                            <div className="grid grid-cols-2 gap-4">
+                                {currentArtisan.portfolioImages.map((image, i) => (
+                                    <div key={i} className="rounded-2xl overflow-hidden hover:scale-105 transition-transform">
+                                        <img src={image} alt={`Portfolio ${i + 1}`} className="w-full h-48 object-cover" />
+                                    </div>
+                                ))}
+                            </div>
+                        </div>
+                        
+                        {/* Specialties */}
+                        <div className="glass mx-6 my-4 p-6 rounded-2xl">
+                            <h2 className="text-2xl font-serif font-bold text-primary mb-4">Specialties</h2>
+                            <div className="flex flex-wrap gap-2">
+                                {currentArtisan.specialties.map((spec, i) => (
+                                    <span key={i} className="bg-accent/10 text-accent px-4 py-2 rounded-full text-sm font-medium">
+                                        {spec}
+                                    </span>
+                                ))}
+                            </div>
+                        </div>
+                    </div>
+                );
+            };
+            
+            // Client Profile Page
+            const ClientProfilePage = () => (
+                <div className="pb-24 min-h-screen" style={{
+                    background: 'linear-gradient(135deg, #0A0A0A 0%, #1A1612 50%, #2D1B0E 100%)'
+                }}>
+                    <div className="glass p-6 mb-6">
+                        <div className="flex items-center gap-4 mb-6">
+                            <img 
+                                src={user?.avatar || "images-7.jpeg"}
+                                alt={user?.name}
+                                className="w-20 h-20 rounded-2xl object-cover"
+                            />
+                            <div className="flex-1">
+                                <h1 className="text-2xl font-serif font-bold text-primary mb-1">{user?.name}</h1>
+                                <p className="text-secondary">{user?.email || "client@kaarigar.com"}</p>
+                                <span className="inline-block bg-accent/10 text-accent px-3 py-1 rounded-full text-xs font-semibold mt-2">
+                                    Client Account
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    {/* Profile Sections */}
+                    <div className="px-6 space-y-4">
+                        <div className="premium-card rounded-2xl p-6">
+                            <h3 className="font-serif font-bold text-primary mb-4 flex items-center gap-2">
+                                <LucideIcon name="heart" size={20} className="text-accent" />
+                                Saved Artisans
+                            </h3>
+                            <div className="space-y-3">
+                                {mockArtisans.slice(0, 2).map(artisan => (
+                                    <div 
+                                        key={artisan.id}
+                                        onClick={() => {
+                                            setCurrentArtisan(artisan);
+                                            setCurrentPage('artisan-profile');
+                                        }}
+                                        className="flex items-center gap-3 p-3 rounded-xl bg-surface/50 hover:bg-surface cursor-pointer transition-all"
+                                    >
+                                        <img src={artisan.profileImage} alt={artisan.name} className="w-12 h-12 rounded-xl object-cover" />
+                                        <div className="flex-1">
+                                            <p className="text-primary font-semibold text-sm">{artisan.name}</p>
+                                            <p className="text-secondary text-xs">{artisan.craft}</p>
+                                        </div>
+                                        <LucideIcon name="chevron-right" size={20} className="text-accent" />
+                                    </div>
+                                ))}
+                            </div>
+                        </div>
+                        
+                        <div className="premium-card rounded-2xl p-6">
+                            <h3 className="font-serif font-bold text-primary mb-4 flex items-center gap-2">
+                                <LucideIcon name="briefcase" size={20} className="text-accent" />
+                                My Commissions
+                            </h3>
+                            <div className="space-y-3">
+                                <div className="p-4 rounded-xl bg-surface/50">
+                                    <div className="flex items-center justify-between mb-2">
+                                        <p className="text-primary font-semibold">Custom Door Panel</p>
+                                        <span className="bg-yellow-500/20 text-yellow-500 px-3 py-1 rounded-full text-xs font-semibold">
+                                            In Progress
+                                        </span>
+                                    </div>
+                                    <p className="text-secondary text-sm">Master Ramesh Khatri</p>
+                                    <p className="text-dim text-xs mt-2">Started: Jan 15, 2024</p>
+                                </div>
+                                <div className="p-4 rounded-xl bg-surface/50">
+                                    <div className="flex items-center justify-between mb-2">
+                                        <p className="text-primary font-semibold">Wooden Sculpture</p>
+                                        <span className="bg-green-500/20 text-green-500 px-3 py-1 rounded-full text-xs font-semibold">
+                                            Completed
+                                        </span>
+                                    </div>
+                                    <p className="text-secondary text-sm">Master Arjun Desai</p>
+                                    <p className="text-dim text-xs mt-2">Completed: Jan 10, 2024</p>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div className="premium-card rounded-2xl p-6">
+                            <h3 className="font-serif font-bold text-primary mb-4 flex items-center gap-2">
+                                <LucideIcon name="settings" size={20} className="text-accent" />
+                                Account Settings
+                            </h3>
+                            <div className="space-y-3">
+                                <button 
+                                    onClick={() => alert('Edit Profile: Update your name, email, and preferences')}
+                                    className="w-full flex items-center justify-between p-4 rounded-xl bg-surface/50 hover:bg-surface transition-all text-left"
+                                >
+                                    <div className="flex items-center gap-3">
+                                        <LucideIcon name="user" size={20} className="text-accent" />
+                                        <span className="text-primary font-medium">Edit Profile</span>
+                                    </div>
+                                    <LucideIcon name="chevron-right" size={20} className="text-dim" />
+                                </button>
+                                <button 
+                                    onClick={() => alert('Notifications: Manage your notification preferences')}
+                                    className="w-full flex items-center justify-between p-4 rounded-xl bg-surface/50 hover:bg-surface transition-all text-left"
+                                >
+                                    <div className="flex items-center gap-3">
+                                        <LucideIcon name="bell" size={20} className="text-accent" />
+                                        <span className="text-primary font-medium">Notifications</span>
+                                    </div>
+                                    <LucideIcon name="chevron-right" size={20} className="text-dim" />
+                                </button>
+                                <button 
+                                    onClick={() => alert('Payment Methods: Add or update payment methods')}
+                                    className="w-full flex items-center justify-between p-4 rounded-xl bg-surface/50 hover:bg-surface transition-all text-left"
+                                >
+                                    <div className="flex items-center gap-3">
+                                        <LucideIcon name="credit-card" size={20} className="text-accent" />
+                                        <span className="text-primary font-medium">Payment Methods</span>
+                                    </div>
+                                    <LucideIcon name="chevron-right" size={20} className="text-dim" />
+                                </button>
+                                <button 
+                                    onClick={() => {
+                                        if (confirm('Are you sure you want to sign out?')) {
+                                            setIsAuthenticated(false);
+                                            setUser(null);
+                                            setCurrentPage('welcome');
+                                        }
+                                    }}
+                                    className="w-full flex items-center justify-between p-4 rounded-xl bg-red-500/10 hover:bg-red-500/20 transition-all text-left"
+                                >
+                                    <div className="flex items-center gap-3">
+                                        <LucideIcon name="log-out" size={20} className="text-red-500" />
+                                        <span className="text-red-500 font-medium">Sign Out</span>
+                                    </div>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            );
+            
+            // Artisan Settings Page
+            const ArtisanSettingsPage = () => (
+                <div className="pb-24 min-h-screen" style={{
+                    background: 'linear-gradient(135deg, #0A0A0A 0%, #1A1612 50%, #2D1B0E 100%)'
+                }}>
+                    <div className="glass p-6 mb-6">
+                        <button
+                            onClick={() => setCurrentPage('profile')}
+                            className="flex items-center gap-2 text-accent hover:text-accent-light mb-4"
+                        >
+                            <LucideIcon name="arrow-left" size={20} />
+                            Back to Dashboard
+                        </button>
+                        <h1 className="text-3xl font-serif font-bold text-primary mb-2">Account Settings</h1>
+                        <p className="text-secondary">Manage your artisan profile and preferences</p>
+                    </div>
+                    
+                    <div className="px-6 space-y-4">
+                        <div className="premium-card rounded-2xl p-6">
+                            <h3 className="font-serif font-bold text-primary mb-4">Profile Information</h3>
+                            <div className="space-y-4">
+                                <div>
+                                    <label className="block text-primary font-semibold mb-2 text-sm">Full Name</label>
+                                    <input
+                                        type="text"
+                                        defaultValue={user?.name}
+                                        className="w-full p-4 rounded-xl bg-white text-gray-900 border border-white/10 focus:border-accent outline-none"
+                                    />
+                                </div>
+                                <div>
+                                    <label className="block text-primary font-semibold mb-2 text-sm">Email</label>
+                                    <input
+                                        type="email"
+                                        defaultValue={user?.email}
+                                        className="w-full p-4 rounded-xl bg-white text-gray-900 border border-white/10 focus:border-accent outline-none"
+                                    />
+                                </div>
+                                <div>
+                                    <label className="block text-primary font-semibold mb-2 text-sm">Phone</label>
+                                    <input
+                                        type="tel"
+                                        defaultValue={user?.phone}
+                                        className="w-full p-4 rounded-xl bg-white text-gray-900 border border-white/10 focus:border-accent outline-none"
+                                    />
+                                </div>
+                                <div>
+                                    <label className="block text-primary font-semibold mb-2 text-sm">Workshop Location</label>
+                                    <input
+                                        type="text"
+                                        defaultValue={user?.workshopLocation}
+                                        className="w-full p-4 rounded-xl bg-white text-gray-900 border border-white/10 focus:border-accent outline-none"
+                                    />
+                                </div>
+                                <button 
+                                    onClick={() => alert('Profile updated successfully!')}
+                                    className="w-full btn-primary py-4 rounded-xl font-bold"
+                                >
+                                    Save Changes
+                                </button>
+                            </div>
+                        </div>
+                        
+                        <div className="premium-card rounded-2xl p-6">
+                            <h3 className="font-serif font-bold text-primary mb-4">My Story</h3>
+                            <textarea
+                                defaultValue={user?.story}
+                                className="w-full p-4 rounded-xl bg-white text-gray-900 border border-white/10 focus:border-accent outline-none resize-none"
+                                rows="6"
+                            />
+                            <button 
+                                onClick={() => alert('Story updated successfully!')}
+                                className="w-full btn-primary py-4 rounded-xl font-bold mt-4"
+                            >
+                                Update Story
+                            </button>
+                        </div>
+                        
+                        <div className="premium-card rounded-2xl p-6">
+                            <h3 className="font-serif font-bold text-primary mb-4">Preferences</h3>
+                            <div className="space-y-3">
+                                <button className="w-full flex items-center justify-between p-4 rounded-xl bg-surface/50 hover:bg-surface transition-all text-left">
+                                    <div className="flex items-center gap-3">
+                                        <LucideIcon name="bell" size={20} className="text-accent" />
+                                        <span className="text-primary font-medium">Notification Settings</span>
+                                    </div>
+                                    <LucideIcon name="chevron-right" size={20} className="text-dim" />
+                                </button>
+                                <button className="w-full flex items-center justify-between p-4 rounded-xl bg-surface/50 hover:bg-surface transition-all text-left">
+                                    <div className="flex items-center gap-3">
+                                        <LucideIcon name="lock" size={20} className="text-accent" />
+                                        <span className="text-primary font-medium">Privacy Settings</span>
+                                    </div>
+                                    <LucideIcon name="chevron-right" size={20} className="text-dim" />
+                                </button>
+                                <button className="w-full flex items-center justify-between p-4 rounded-xl bg-surface/50 hover:bg-surface transition-all text-left">
+                                    <div className="flex items-center gap-3">
+                                        <LucideIcon name="credit-card" size={20} className="text-accent" />
+                                        <span className="text-primary font-medium">Payment Settings</span>
+                                    </div>
+                                    <LucideIcon name="chevron-right" size={20} className="text-dim" />
+                                </button>
+                            </div>
+                        </div>
+                        
+                        <button 
+                            onClick={() => {
+                                if (confirm('Are you sure you want to sign out?')) {
+                                    setIsAuthenticated(false);
+                                    setUser(null);
+                                    setCurrentPage('welcome');
+                                }
+                            }}
+                            className="w-full premium-card rounded-2xl p-6 text-red-500 font-semibold hover:bg-red-500/10 transition-all"
+                        >
+                            <div className="flex items-center justify-center gap-3">
+                                <LucideIcon name="log-out" size={24} />
+                                Sign Out
+                            </div>
+                        </button>
+                    </div>
+                </div>
+            );
+            
+            // Specialty Detail Page
+            const SpecialtyDetailPage = () => {
+                if (!selectedSpecialty) return null;
+                
+                const filteredArtisans = mockArtisans.filter(artisan => 
+                    artisan.specialties.includes(selectedSpecialty.name)
+                );
+                
+                return (
+                    <div className="pb-24 min-h-screen" style={{
+                        background: 'linear-gradient(135deg, #0A0A0A 0%, #1A1612 50%, #2D1B0E 100%)'
+                    }}>
+                        <div className="glass p-6 mb-6">
+                            <button
+                                onClick={() => setCurrentPage('home')}
+                                className="flex items-center gap-2 text-accent hover:text-accent-light mb-4"
+                            >
+                                <LucideIcon name="arrow-left" size={20} />
+                                Back to Home
+                            </button>
+                            <div className="flex items-center gap-4 mb-4">
+                                <div className="w-16 h-16 rounded-2xl bg-accent/20 flex items-center justify-center">
+                                    <LucideIcon name={selectedSpecialty.icon} size={32} className="text-accent" />
+                                </div>
+                                <div>
+                                    <h1 className="text-3xl font-serif font-bold text-primary mb-2">{selectedSpecialty.name}</h1>
+                                    <p className="text-secondary">{selectedSpecialty.desc}</p>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div className="px-6 mb-6">
+                            <div className="premium-card rounded-2xl p-6">
+                                <h3 className="font-serif font-bold text-primary mb-3">About This Specialty</h3>
+                                <p className="text-secondary leading-relaxed">
+                                    {selectedSpecialty.name === "Temple Architecture" && 
+                                        "Temple architecture wood carving is a sacred art form that has been passed down through generations. Our master artisans create intricate designs inspired by ancient temples, incorporating traditional motifs and patterns that tell stories of our rich cultural heritage."}
+                                    {selectedSpecialty.name === "Furniture Design" && 
+                                        "Custom wooden furniture design combines functionality with artistic expression. Our artisans craft unique pieces that blend traditional woodworking techniques with contemporary aesthetics, creating furniture that becomes a centerpiece in any space."}
+                                    {selectedSpecialty.name === "Decorative Panels" && 
+                                        "Decorative wooden panels transform spaces with their intricate patterns and artistic designs. Each panel is meticulously carved by hand, featuring geometric patterns, floral motifs, or custom designs that add character and warmth to any interior."}
+                                    {selectedSpecialty.name === "Heritage Restoration" && 
+                                        "Heritage restoration is the art of bringing antique wooden pieces back to life. Our master craftsmen specialize in preserving historical artifacts, restoring old furniture, and maintaining the authenticity of heritage wooden structures with traditional techniques."}
+                                </p>
+                            </div>
+                        </div>
+                        
+                        <div className="px-6">
+                            <h2 className="text-2xl font-serif font-bold text-primary mb-6">
+                                Master Artisans ({filteredArtisans.length})
+                            </h2>
+                            {filteredArtisans.length > 0 ? (
+                                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                    {filteredArtisans.map(artisan => (
+                                        <div
+                                            key={artisan.id}
+                                            className="premium-card rounded-2xl overflow-hidden cursor-pointer hover:scale-105 transition-transform"
+                                            onClick={() => {
+                                                setCurrentArtisan(artisan);
+                                                setCurrentPage('artisan-profile');
+                                            }}
+                                        >
+                                            <div className="relative">
+                                                <img 
+                                                    src={artisan.profileImage} 
+                                                    alt={artisan.name}
+                                                    className="w-full h-48 object-cover"
+                                                />
+                                                {artisan.verified && (
+                                                    <div className="absolute top-3 right-3 bg-accent text-white px-3 py-1 rounded-full text-xs flex items-center gap-1">
+                                                        <LucideIcon name="badge-check" size={14} />
+                                                        Verified
+                                                    </div>
+                                                )}
+                                            </div>
+                                            <div className="p-5">
+                                                <h3 className="font-serif font-bold text-primary text-lg mb-1">{artisan.name}</h3>
+                                                <p className="text-secondary text-sm mb-3">{artisan.experience} experience</p>
+                                                <div className="flex items-center justify-between mb-3">
+                                                    <div className="flex items-center gap-2">
+                                                        <LucideIcon name="map-pin" size={14} className="text-accent" />
+                                                        <span className="text-secondary text-xs">{artisan.location}</span>
+                                                    </div>
+                                                    <div className="flex items-center gap-1">
+                                                        <LucideIcon name="star" size={14} className="text-accent" />
+                                                        <span className="text-primary text-sm font-semibold">{artisan.rating}</span>
+                                                    </div>
+                                                </div>
+                                                <div className="flex flex-wrap gap-2">
+                                                    {artisan.specialties.map((spec, i) => (
+                                                        <span key={i} className="bg-accent/10 text-accent px-2 py-1 rounded-full text-xs">
+                                                            {spec}
+                                                        </span>
+                                                    ))}
+                                                </div>
+                                            </div>
+                                        </div>
+                                    ))}
+                                </div>
+                            ) : (
+                                <div className="premium-card rounded-2xl p-12 text-center">
+                                    <LucideIcon name="search" size={48} className="text-dim mx-auto mb-4" />
+                                    <h3 className="text-xl font-serif font-bold text-primary mb-2">No Artisans Found</h3>
+                                    <p className="text-secondary">No artisans specialize in this category yet.</p>
+                                </div>
+                            )}
+                        </div>
+                    </div>
+                );
+            };
+            
+            // Cart Page
+            const CartPage = () => (
+                <div className="pb-24 min-h-screen" style={{
+                    background: 'linear-gradient(135deg, #0A0A0A 0%, #1A1612 50%, #2D1B0E 100%)'
+                }}>
+                    <div className="glass p-6 mb-6">
+                        <button
+                            onClick={() => setCurrentPage('home')}
+                            className="flex items-center gap-2 text-accent hover:text-accent-light mb-4"
+                        >
+                            <LucideIcon name="arrow-left" size={20} />
+                            Continue Shopping
+                        </button>
+                        <h1 className="text-3xl font-serif font-bold text-primary mb-2">My Cart</h1>
+                        <p className="text-secondary">{cart.length} {cart.length === 1 ? 'item' : 'items'} in your cart</p>
+                    </div>
+                    
+                    {cart.length === 0 ? (
+                        <div className="px-6">
+                            <div className="premium-card rounded-2xl p-12 text-center">
+                                <LucideIcon name="shopping-cart" size={64} className="text-dim mx-auto mb-4" />
+                                <h3 className="text-2xl font-serif font-bold text-primary mb-2">Your cart is empty</h3>
+                                <p className="text-secondary mb-6">Start adding some beautiful handcrafted items!</p>
+                                <button 
+                                    onClick={() => setCurrentPage('home')}
+                                    className="btn-primary py-3 px-6 rounded-xl"
+                                >
+                                    Browse Marketplace
+                                </button>
+                            </div>
+                        </div>
+                    ) : (
+                        <div className="px-6">
+                            <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                                <div className="lg:col-span-2 space-y-4">
+                                    {cart.map(item => (
+                                        <div key={item.cartId} className="premium-card rounded-2xl p-6">
+                                            <div className="flex gap-4">
+                                                <img 
+                                                    src={item.image} 
+                                                    alt={item.name}
+                                                    className="w-24 h-24 rounded-xl object-cover"
+                                                />
+                                                <div className="flex-1">
+                                                    <h3 className="font-serif font-bold text-primary text-lg mb-1">{item.name}</h3>
+                                                    <p className="text-secondary text-sm mb-2">by {item.artisanName}</p>
+                                                    <p className="text-accent font-bold text-xl">{item.price}</p>
+                                                </div>
+                                                <button 
+                                                    onClick={() => removeFromCart(item.cartId)}
+                                                    className="p-2 rounded-xl bg-red-500/10 hover:bg-red-500/20 text-red-500 transition-all"
+                                                >
+                                                    <LucideIcon name="trash-2" size={20} />
+                                                </button>
+                                            </div>
+                                        </div>
+                                    ))}
+                                </div>
+                                
+                                <div className="lg:col-span-1">
+                                    <div className="premium-card rounded-2xl p-6 sticky top-6">
+                                        <h3 className="font-serif font-bold text-primary text-xl mb-6">Order Summary</h3>
+                                        <div className="space-y-3 mb-6">
+                                            <div className="flex justify-between text-secondary">
+                                                <span>Subtotal</span>
+                                                <span>₹{getCartTotal().toLocaleString()}</span>
+                                            </div>
+                                            <div className="flex justify-between text-secondary">
+                                                <span>Shipping</span>
+                                                <span className="text-green-500">Free</span>
+                                            </div>
+                                            <div className="border-t border-white/10 pt-3 flex justify-between">
+                                                <span className="font-bold text-primary text-lg">Total</span>
+                                                <span className="font-bold text-accent text-xl">₹{getCartTotal().toLocaleString()}</span>
+                                            </div>
+                                        </div>
+                                        <button 
+                                            onClick={() => setCurrentPage('checkout')}
+                                            className="w-full btn-primary py-4 rounded-xl font-bold text-lg"
+                                        >
+                                            Proceed to Checkout
+                                        </button>
+                                        <button 
+                                            onClick={() => setCurrentPage('home')}
+                                            className="w-full btn-secondary py-3 rounded-xl font-semibold mt-3"
+                                        >
+                                            Continue Shopping
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    )}
+                </div>
+            );
+            
+            // Checkout Page
+            const CheckoutPage = () => {
+                const [formData, setFormData] = useState({
+                    name: user?.name || '',
+                    email: user?.email || '',
+                    phone: '',
+                    address: '',
+                    city: '',
+                    pincode: '',
+                    cardNumber: '',
+                    cardName: '',
+                    expiry: '',
+                    cvv: ''
+                });
+                
+                const handlePayment = (e) => {
+                    e.preventDefault();
+                    showToast('Processing payment...', 'info');
+                    setTimeout(() => {
+                        setCurrentPage('order-confirmation');
+                        setCart([]);
+                    }, 2000);
+                };
+                
+                return (
+                    <div className="pb-24 min-h-screen" style={{
+                        background: 'linear-gradient(135deg, #0A0A0A 0%, #1A1612 50%, #2D1B0E 100%)'
+                    }}>
+                        <div className="glass p-6 mb-6">
+                            <button
+                                onClick={() => setCurrentPage('cart')}
+                                className="flex items-center gap-2 text-accent hover:text-accent-light mb-4"
+                            >
+                                <LucideIcon name="arrow-left" size={20} />
+                                Back to Cart
+                            </button>
+                            <h1 className="text-3xl font-serif font-bold text-primary mb-2">Checkout</h1>
+                            <p className="text-secondary">Complete your order</p>
+                        </div>
+                        
+                        <div className="px-6">
+                            <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                                <div className="lg:col-span-2">
+                                    <form onSubmit={handlePayment} className="space-y-6">
+                                        <div className="premium-card rounded-2xl p-6">
+                                            <h3 className="font-serif font-bold text-primary text-xl mb-6">Shipping Information</h3>
+                                            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                                <div className="md:col-span-2">
+                                                    <label className="block text-primary font-semibold mb-2 text-sm">Full Name</label>
+                                                    <input
+                                                        type="text"
+                                                        value={formData.name}
+                                                        onChange={(e) => setFormData({...formData, name: e.target.value})}
+                                                        className="w-full p-4 rounded-xl bg-white text-gray-900 border border-white/10 focus:border-accent outline-none"
+                                                        required
+                                                    />
+                                                </div>
+                                                <div>
+                                                    <label className="block text-primary font-semibold mb-2 text-sm">Email</label>
+                                                    <input
+                                                        type="email"
+                                                        value={formData.email}
+                                                        onChange={(e) => setFormData({...formData, email: e.target.value})}
+                                                        className="w-full p-4 rounded-xl bg-white text-gray-900 border border-white/10 focus:border-accent outline-none"
+                                                        required
+                                                    />
+                                                </div>
+                                                <div>
+                                                    <label className="block text-primary font-semibold mb-2 text-sm">Phone</label>
+                                                    <input
+                                                        type="tel"
+                                                        value={formData.phone}
+                                                        onChange={(e) => setFormData({...formData, phone: e.target.value})}
+                                                        className="w-full p-4 rounded-xl bg-white text-gray-900 border border-white/10 focus:border-accent outline-none"
+                                                        required
+                                                    />
+                                                </div>
+                                                <div className="md:col-span-2">
+                                                    <label className="block text-primary font-semibold mb-2 text-sm">Address</label>
+                                                    <textarea
+                                                        value={formData.address}
+                                                        onChange={(e) => setFormData({...formData, address: e.target.value})}
+                                                        className="w-full p-4 rounded-xl bg-white text-gray-900 border border-white/10 focus:border-accent outline-none resize-none"
+                                                        rows="3"
+                                                        required
+                                                    />
+                                                </div>
+                                                <div>
+                                                    <label className="block text-primary font-semibold mb-2 text-sm">City</label>
+                                                    <input
+                                                        type="text"
+                                                        value={formData.city}
+                                                        onChange={(e) => setFormData({...formData, city: e.target.value})}
+                                                        className="w-full p-4 rounded-xl bg-white text-gray-900 border border-white/10 focus:border-accent outline-none"
+                                                        required
+                                                    />
+                                                </div>
+                                                <div>
+                                                    <label className="block text-primary font-semibold mb-2 text-sm">Pincode</label>
+                                                    <input
+                                                        type="text"
+                                                        value={formData.pincode}
+                                                        onChange={(e) => setFormData({...formData, pincode: e.target.value})}
+                                                        className="w-full p-4 rounded-xl bg-white text-gray-900 border border-white/10 focus:border-accent outline-none"
+                                                        required
+                                                    />
+                                                </div>
+                                            </div>
+                                        </div>
+                                        
+                                        <div className="premium-card rounded-2xl p-6">
+                                            <h3 className="font-serif font-bold text-primary text-xl mb-6">Payment Information</h3>
+                                            <div className="grid grid-cols-1 gap-4">
+                                                <div>
+                                                    <label className="block text-primary font-semibold mb-2 text-sm">Card Number</label>
+                                                    <input
+                                                        type="text"
+                                                        value={formData.cardNumber}
+                                                        onChange={(e) => setFormData({...formData, cardNumber: e.target.value})}
+                                                        placeholder="1234 5678 9012 3456"
+                                                        className="w-full p-4 rounded-xl bg-white text-gray-900 border border-white/10 focus:border-accent outline-none"
+                                                        required
+                                                    />
+                                                </div>
+                                                <div>
+                                                    <label className="block text-primary font-semibold mb-2 text-sm">Cardholder Name</label>
+                                                    <input
+                                                        type="text"
+                                                        value={formData.cardName}
+                                                        onChange={(e) => setFormData({...formData, cardName: e.target.value})}
+                                                        className="w-full p-4 rounded-xl bg-white text-gray-900 border border-white/10 focus:border-accent outline-none"
+                                                        required
+                                                    />
+                                                </div>
+                                                <div className="grid grid-cols-2 gap-4">
+                                                    <div>
+                                                        <label className="block text-primary font-semibold mb-2 text-sm">Expiry Date</label>
+                                                        <input
+                                                            type="text"
+                                                            value={formData.expiry}
+                                                            onChange={(e) => setFormData({...formData, expiry: e.target.value})}
+                                                            placeholder="MM/YY"
+                                                            className="w-full p-4 rounded-xl bg-white text-gray-900 border border-white/10 focus:border-accent outline-none"
+                                                            required
+                                                        />
+                                                    </div>
+                                                    <div>
+                                                        <label className="block text-primary font-semibold mb-2 text-sm">CVV</label>
+                                                        <input
+                                                            type="text"
+                                                            value={formData.cvv}
+                                                            onChange={(e) => setFormData({...formData, cvv: e.target.value})}
+                                                            placeholder="123"
+                                                            maxLength="3"
+                                                            className="w-full p-4 rounded-xl bg-white text-gray-900 border border-white/10 focus:border-accent outline-none"
+                                                            required
+                                                        />
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        
+                                        <button 
+                                            type="submit"
+                                            className="w-full btn-primary py-4 rounded-xl font-bold text-lg"
+                                        >
+                                            Pay ₹{getCartTotal().toLocaleString()}
+                                        </button>
+                                    </form>
+                                </div>
+                                
+                                <div className="lg:col-span-1">
+                                    <div className="premium-card rounded-2xl p-6 sticky top-6">
+                                        <h3 className="font-serif font-bold text-primary text-xl mb-6">Order Summary</h3>
+                                        <div className="space-y-3 mb-6">
+                                            {cart.map(item => (
+                                                <div key={item.cartId} className="flex gap-3">
+                                                    <img src={item.image} alt={item.name} className="w-16 h-16 rounded-lg object-cover" />
+                                                    <div className="flex-1">
+                                                        <p className="text-primary font-semibold text-sm">{item.name}</p>
+                                                        <p className="text-accent text-sm">{item.price}</p>
+                                                    </div>
+                                                </div>
+                                            ))}
+                                        </div>
+                                        <div className="border-t border-white/10 pt-4 space-y-2">
+                                            <div className="flex justify-between text-secondary">
+                                                <span>Subtotal</span>
+                                                <span>₹{getCartTotal().toLocaleString()}</span>
+                                            </div>
+                                            <div className="flex justify-between text-secondary">
+                                                <span>Shipping</span>
+                                                <span className="text-green-500">Free</span>
+                                            </div>
+                                            <div className="flex justify-between pt-2">
+                                                <span className="font-bold text-primary">Total</span>
+                                                <span className="font-bold text-accent text-xl">₹{getCartTotal().toLocaleString()}</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                );
+            };
+            
+            // Order Confirmation Page
+            const OrderConfirmationPage = () => (
+                <div className="pb-24 min-h-screen flex items-center justify-center" style={{
+                    background: 'linear-gradient(135deg, #0A0A0A 0%, #1A1612 50%, #2D1B0E 100%)'
+                }}>
+                    <div className="max-w-2xl w-full mx-4">
+                        <div className="premium-card rounded-3xl p-12 text-center">
+                            <div className="w-24 h-24 bg-green-500/20 rounded-full flex items-center justify-center mx-auto mb-6">
+                                <LucideIcon name="check-circle" size={48} className="text-green-500" />
+                            </div>
+                            <h1 className="text-4xl font-serif font-bold text-primary mb-4">Order Confirmed!</h1>
+                            <p className="text-secondary text-lg mb-8">Thank you for supporting our artisans. Your order has been placed successfully.</p>
+                            
+                            <div className="bg-surface/50 rounded-2xl p-6 mb-8">
+                                <div className="grid grid-cols-2 gap-4 text-left">
+                                    <div>
+                                        <p className="text-dim text-sm mb-1">Order Number</p>
+                                        <p className="text-primary font-bold">KAA{Date.now().toString().slice(-8)}</p>
+                                    </div>
+                                    <div>
+                                        <p className="text-dim text-sm mb-1">Estimated Delivery</p>
+                                        <p className="text-primary font-bold">7-10 Business Days</p>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div className="flex gap-4">
+                                <button 
+                                    onClick={() => setCurrentPage('home')}
+                                    className="flex-1 btn-primary py-4 rounded-xl font-bold"
+                                >
+                                    Continue Shopping
+                                </button>
+                                <button 
+                                    onClick={() => setCurrentPage('profile')}
+                                    className="flex-1 btn-secondary py-4 rounded-xl font-bold"
+                                >
+                                    View Orders
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            );
+            
+            // Blog Detail Page
+            const BlogDetailPage = () => {
+                if (!selectedBlog) return null;
+                
+                return (
+                    <div className="pb-24 min-h-screen" style={{
+                        background: 'linear-gradient(135deg, #0A0A0A 0%, #1A1612 50%, #2D1B0E 100%)'
+                    }}>
+                        <div className="glass p-6 mb-6">
+                            <button
+                                onClick={() => setCurrentPage('home')}
+                                className="flex items-center gap-2 text-accent hover:text-accent-light"
+                            >
+                                <LucideIcon name="arrow-left" size={20} />
+                                Back to Home
+                            </button>
+                        </div>
+                        
+                        <div className="max-w-4xl mx-auto px-6">
+                            <div className="premium-card rounded-3xl overflow-hidden mb-8">
+                                <img 
+                                    src={selectedBlog.image} 
+                                    alt={selectedBlog.title}
+                                    className="w-full h-96 object-cover"
+                                />
+                                <div className="p-8">
+                                    <div className="flex items-center gap-4 mb-6">
+                                        <span className="bg-accent/20 text-accent px-4 py-2 rounded-full text-sm font-semibold">
+                                            {selectedBlog.readTime}
+                                        </span>
+                                        <span className="text-secondary">{selectedBlog.date}</span>
+                                    </div>
+                                    
+                                    <h1 className="text-4xl font-serif font-bold text-primary mb-6">{selectedBlog.title}</h1>
+                                    
+                                    <div className="flex items-center gap-3 mb-8 pb-8 border-b border-white/10">
+                                        <div className="w-12 h-12 rounded-full bg-accent/20 flex items-center justify-center">
+                                            <LucideIcon name="user" size={24} className="text-accent" />
+                                        </div>
+                                        <div>
+                                            <p className="text-primary font-semibold">{selectedBlog.author}</p>
+                                            <p className="text-secondary text-sm">Master Artisan</p>
+                                        </div>
+                                    </div>
+                                    
+                                    <div className="prose prose-invert max-w-none">
+                                        <p className="text-secondary text-lg leading-relaxed whitespace-pre-line">
+                                            {selectedBlog.content}
+                                        </p>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div className="premium-card rounded-2xl p-8">
+                                <h3 className="font-serif font-bold text-primary text-2xl mb-6">More Articles</h3>
+                                <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                                    {mockBlogs.filter(b => b.id !== selectedBlog.id).slice(0, 3).map(blog => (
+                                        <div 
+                                            key={blog.id}
+                                            onClick={() => {
+                                                setSelectedBlog(blog);
+                                                window.scrollTo(0, 0);
+                                            }}
+                                            className="cursor-pointer hover:scale-105 transition-transform"
+                                        >
+                                            <img src={blog.image} alt={blog.title} className="w-full h-32 object-cover rounded-xl mb-3" />
+                                            <h4 className="font-serif font-bold text-primary mb-2">{blog.title}</h4>
+                                            <p className="text-secondary text-sm">{blog.readTime}</p>
+                                        </div>
+                                    ))}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                );
+            };
+            
+            // Toast Notification Component
+            const Toast = () => {
+                if (!toast) return null;
+                
+                return (
+                    <div className="fixed top-6 right-6 z-50 animate-fade-in">
+                        <div className={`premium-card rounded-2xl p-4 shadow-2xl flex items-center gap-3 ${
+                            toast.type === 'success' ? 'border-l-4 border-green-500' :
+                            toast.type === 'error' ? 'border-l-4 border-red-500' :
+                            'border-l-4 border-blue-500'
+                        }`}>
+                            <LucideIcon 
+                                name={toast.type === 'success' ? 'check-circle' : toast.type === 'error' ? 'x-circle' : 'info'} 
+                                size={24} 
+                                className={
+                                    toast.type === 'success' ? 'text-green-500' :
+                                    toast.type === 'error' ? 'text-red-500' :
+                                    'text-blue-500'
+                                }
+                            />
+                            <p className="text-primary font-semibold">{toast.message}</p>
+                        </div>
+                    </div>
+                );
+            };
+            
+            // Commission Modal
+            const CommissionModal = () => {
+                if (!isCommissionOpen) return null;
+                
+                return (
+                    <div className="fixed inset-0 bg-black/80 flex items-center justify-center z-50 p-4 fade-in">
+                        <div className="premium-card rounded-3xl p-8 max-w-lg w-full">
+                            <div className="flex items-center justify-between mb-6">
+                                <h3 className="text-2xl font-serif font-bold text-primary">Custom Commission</h3>
+                                <button 
+                                    onClick={() => setIsCommissionOpen(false)}
+                                    className="p-2 rounded-xl bg-surface hover:bg-surface/80"
+                                >
+                                    <LucideIcon name="x" size={24} className="text-primary" />
+                                </button>
+                            </div>
+                            
+                            <p className="text-secondary mb-6">Hire {currentArtisan?.name} for custom work</p>
+                            
+                            <div className="space-y-4 mb-6">
+                                <div>
+                                    <label className="block text-primary font-semibold mb-2">Project Title</label>
+                                    <input 
+                                        className="w-full p-4 rounded-xl bg-white text-gray-900 border border-white/10 focus:border-accent outline-none"
+                                        placeholder="e.g., Custom Wooden Door Panel"
+                                    />
+                                </div>
+                                
+                                <div>
+                                    <label className="block text-primary font-semibold mb-2">Description</label>
+                                    <textarea 
+                                        className="w-full p-4 rounded-xl bg-white text-gray-900 border border-white/10 focus:border-accent outline-none resize-none"
+                                        rows="4"
+                                        placeholder="Describe your project requirements..."
+                                    />
+                                </div>
+                                
+                                <div>
+                                    <label className="block text-primary font-semibold mb-2">Budget Range</label>
+                                    <input 
+                                        className="w-full p-4 rounded-xl bg-white text-gray-900 border border-white/10 focus:border-accent outline-none"
+                                        placeholder="e.g., ₹10,000 - ₹20,000"
+                                    />
+                                </div>
+                                
+                                <div>
+                                    <label className="block text-primary font-semibold mb-2">Timeline</label>
+                                    <input 
+                                        className="w-full p-4 rounded-xl bg-white text-gray-900 border border-white/10 focus:border-accent outline-none"
+                                        placeholder="e.g., 4-6 weeks"
+                                    />
+                                </div>
+                            </div>
+                            
+                            <button 
+                                onClick={() => {
+                                    setIsCommissionOpen(false);
+                                    alert('Commission request sent! The artisan will contact you soon.');
+                                }}
+                                className="w-full btn-primary py-4 rounded-xl font-bold"
+                            >
+                                Submit Request
+                            </button>
+                        </div>
+                    </div>
+                );
+            };
+            
+            // Bottom Navigation
+            const BottomNav = () => (
+                <div className="fixed bottom-0 left-0 right-0 glass border-t border-white/10 px-4 py-3 z-50">
+                    <div className="flex justify-around items-center max-w-md mx-auto">
+                        <button
+                            onClick={() => setCurrentPage('home')}
+                            className={`flex flex-col items-center p-3 rounded-xl transition-all ${
+                                currentPage === 'home' ? 'text-accent bg-accent/10' : 'text-secondary hover:text-primary'
+                            }`}
+                        >
+                            <LucideIcon name="home" size={24} />
+                            <span className="text-xs mt-1 font-medium">Home</span>
+                        </button>
+                        
+                        <button
+                            onClick={() => setCurrentPage('artisans')}
+                            className={`flex flex-col items-center p-3 rounded-xl transition-all ${
+                                currentPage === 'artisans' ? 'text-accent bg-accent/10' : 'text-secondary hover:text-primary'
+                            }`}
+                        >
+                            <LucideIcon name="users" size={24} />
+                            <span className="text-xs mt-1 font-medium">Artisans</span>
+                        </button>
+                        
+                        <button
+                            onClick={() => setIsScannerOpen(true)}
+                            className="floating glow p-5 rounded-full absolute -top-8 left-1/2 transform -translate-x-1/2"
+                            style={{ background: 'linear-gradient(135deg, #8B4513 0%, #CD853F 100%)' }}
+                        >
+                            <LucideIcon name="scan" size={32} className="text-white" />
+                        </button>
+                        
+                        <button
+                            onClick={() => setCurrentPage('orders')}
+                            className={`flex flex-col items-center p-3 rounded-xl transition-all ${
+                                currentPage === 'orders' ? 'text-accent bg-accent/10' : 'text-secondary hover:text-primary'
+                            }`}
+                        >
+                            <LucideIcon name="package" size={24} />
+                            <span className="text-xs mt-1 font-medium">Orders</span>
+                        </button>
+                        
+                        <button
+                            onClick={() => setCurrentPage('profile')}
+                            className={`flex flex-col items-center p-3 rounded-xl transition-all ${
+                                currentPage === 'profile' ? 'text-accent bg-accent/10' : 'text-secondary hover:text-primary'
+                            }`}
+                        >
+                            <LucideIcon name="user" size={24} />
+                            <span className="text-xs mt-1 font-medium">Profile</span>
+                        </button>
+                    </div>
+                </div>
+            );
+            
+            // Orders Page
+            const OrdersPage = () => (
+                <div className="pb-24 min-h-screen page-bg">
+                    <div className="glass p-6 mb-6 border-b border-white/10">
+                        <h1 className="text-3xl font-serif font-bold text-primary mb-2">My Orders</h1>
+                        <p className="text-secondary">Track and manage your orders</p>
+                    </div>
+                    
+                    <div className="px-6">
+                        {mockOrders.length === 0 ? (
+                            <div className="premium-card rounded-2xl p-12 text-center">
+                                <LucideIcon name="package" size={64} className="text-dim mx-auto mb-4" />
+                                <h3 className="text-2xl font-serif font-bold text-primary mb-2">No orders yet</h3>
+                                <p className="text-secondary mb-6">Start shopping to see your orders here</p>
+                                <button 
+                                    onClick={() => setCurrentPage('home')}
+                                    className="btn-primary py-3 px-6 rounded-xl"
+                                >
+                                    Browse Marketplace
+                                </button>
+                            </div>
+                        ) : (
+                            <div className="space-y-4">
+                                {mockOrders.map(order => (
+                                    <div 
+                                        key={order.id}
+                                        onClick={() => {
+                                            setSelectedOrder(order);
+                                            setCurrentPage('order-detail');
+                                        }}
+                                        className="premium-card rounded-2xl p-6 cursor-pointer hover:scale-[1.02] transition-all duration-300"
+                                    >
+                                        <div className="flex items-start gap-4">
+                                            <img 
+                                                src={order.items[0].image}
+                                                alt={order.items[0].name}
+                                                className="w-20 h-20 rounded-xl object-cover"
+                                            />
+                                            <div className="flex-1">
+                                                <div className="flex items-start justify-between mb-2">
+                                                    <div>
+                                                        <h3 className="font-serif font-bold text-primary text-lg mb-1">
+                                                            Order #{order.orderNumber}
+                                                        </h3>
+                                                        <p className="text-secondary text-sm">{order.date}</p>
+                                                    </div>
+                                                    <div className={`px-4 py-2 rounded-full text-xs font-semibold ${
+                                                        order.status === 'delivered' ? 'bg-green-500/20 text-green-500' :
+                                                        order.status === 'shipped' ? 'bg-blue-500/20 text-blue-500' :
+                                                        order.status === 'in-progress' ? 'bg-yellow-500/20 text-yellow-500' :
+                                                        'bg-gray-500/20 text-gray-400'
+                                                    }`}>
+                                                        {order.status === 'delivered' ? '✓ Delivered' :
+                                                         order.status === 'shipped' ? '🚚 Shipped' :
+                                                         order.status === 'in-progress' ? '⚒️ In Progress' :
+                                                         '📦 Order Placed'}
+                                                    </div>
+                                                </div>
+                                                <p className="text-primary font-semibold mb-1">{order.items[0].name}</p>
+                                                <p className="text-secondary text-sm mb-3">by {order.items[0].artisan}</p>
+                                                <div className="flex items-center justify-between">
+                                                    <span className="text-accent font-bold text-lg">{order.total}</span>
+                                                    <button className="text-accent font-semibold text-sm flex items-center gap-2 hover:gap-3 transition-all">
+                                                        View Details
+                                                        <LucideIcon name="arrow-right" size={16} />
+                                                    </button>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                ))}
+                            </div>
+                        )}
+                    </div>
+                </div>
+            );
+            
+            // Order Detail & Tracking Page
+            const OrderDetailPage = () => {
+                if (!selectedOrder) return null;
+                
+                const getStepStatus = (step) => {
+                    const steps = ['placed', 'in-progress', 'shipped', 'delivered'];
+                    const currentIndex = steps.indexOf(selectedOrder.status);
+                    const stepIndex = steps.indexOf(step);
+                    
+                    if (stepIndex < currentIndex) return 'completed';
+                    if (stepIndex === currentIndex) return 'active';
+                    return 'pending';
+                };
+                
+                const getProgressWidth = () => {
+                    const steps = ['placed', 'in-progress', 'shipped', 'delivered'];
+                    const currentIndex = steps.indexOf(selectedOrder.status);
+                    return `${(currentIndex / (steps.length - 1)) * 100}%`;
+                };
+                
+                return (
+                    <div className="pb-24 min-h-screen page-bg">
+                        <div className="glass p-6 mb-6 border-b border-white/10">
+                            <button
+                                onClick={() => setCurrentPage('orders')}
+                                className="flex items-center gap-2 text-accent hover:text-accent-light mb-4"
+                            >
+                                <LucideIcon name="arrow-left" size={20} />
+                                Back to Orders
+                            </button>
+                            <h1 className="text-3xl font-serif font-bold text-primary mb-2">
+                                Order #{selectedOrder.orderNumber}
+                            </h1>
+                            <p className="text-secondary">Placed on {selectedOrder.date}</p>
+                        </div>
+                        
+                        {/* Order Tracker */}
+                        <div className="px-6 mb-8">
+                            <div className="premium-card rounded-2xl p-8">
+                                <h3 className="font-serif font-bold text-primary text-xl mb-8 text-center">Order Tracking</h3>
+                                <div className="order-tracker">
+                                    <div className="progress-line" style={{ width: getProgressWidth() }}></div>
+                                    
+                                    {[
+                                        { key: 'placed', icon: 'check-circle', label: 'Order Placed' },
+                                        { key: 'in-progress', icon: 'hammer', label: 'In Progress' },
+                                        { key: 'shipped', icon: 'truck', label: 'Shipped' },
+                                        { key: 'delivered', icon: 'package-check', label: 'Delivered' }
+                                    ].map((step, index) => {
+                                        const status = getStepStatus(step.key);
+                                        return (
+                                            <div key={step.key} className={`order-step ${status}`}>
+                                                {status === 'active' && <div className="order-step-pulse"></div>}
+                                                <div className="order-step-circle">
+                                                    <LucideIcon 
+                                                        name={status === 'completed' ? 'check' : step.icon} 
+                                                        size={24} 
+                                                        className="text-white"
+                                                    />
+                                                </div>
+                                                <p className={`text-sm font-semibold text-center ${
+                                                    status === 'active' ? 'text-accent' :
+                                                    status === 'completed' ? 'text-green-500' :
+                                                    'text-dim'
+                                                }`}>
+                                                    {step.label}
+                                                </p>
+                                            </div>
+                                        );
+                                    })}
+                                </div>
+                                
+                                {selectedOrder.trackingId && (
+                                    <div className="mt-6 text-center">
+                                        <p className="text-secondary text-sm mb-2">Tracking ID</p>
+                                        <p className="text-primary font-mono font-bold">{selectedOrder.trackingId}</p>
+                                    </div>
+                                )}
+                                
+                                {selectedOrder.status === 'delivered' && selectedOrder.deliveredDate && (
+                                    <div className="mt-6 bg-green-500/10 rounded-xl p-4 text-center">
+                                        <p className="text-green-500 font-semibold">
+                                            ✓ Delivered on {selectedOrder.deliveredDate}
+                                        </p>
+                                    </div>
+                                )}
+                                
+                                {selectedOrder.status !== 'delivered' && selectedOrder.estimatedDelivery && (
+                                    <div className="mt-6 bg-accent/10 rounded-xl p-4 text-center">
+                                        <p className="text-accent font-semibold">
+                                            Estimated Delivery: {selectedOrder.estimatedDelivery}
+                                        </p>
+                                    </div>
+                                )}
+                            </div>
+                        </div>
+                        
+                        {/* Order Items */}
+                        <div className="px-6 mb-6">
+                            <div className="premium-card rounded-2xl p-6">
+                                <h3 className="font-serif font-bold text-primary text-xl mb-6">Order Items</h3>
+                                <div className="space-y-4">
+                                    {selectedOrder.items.map((item, index) => (
+                                        <div key={index} className="flex gap-4 p-4 rounded-xl bg-surface/50">
+                                            <img 
+                                                src={item.image}
+                                                alt={item.name}
+                                                className="w-20 h-20 rounded-xl object-cover"
+                                            />
+                                            <div className="flex-1">
+                                                <h4 className="font-serif font-bold text-primary mb-1">{item.name}</h4>
+                                                <p className="text-secondary text-sm mb-2">by {item.artisan}</p>
+                                                <p className="text-accent font-bold">{item.price}</p>
+                                            </div>
+                                        </div>
+                                    ))}
+                                </div>
+                                
+                                <div className="border-t border-white/10 mt-6 pt-6">
+                                    <div className="flex justify-between items-center">
+                                        <span className="text-primary font-bold text-lg">Total</span>
+                                        <span className="text-accent font-bold text-2xl">{selectedOrder.total}</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        {/* Shipping Address */}
+                        <div className="px-6 mb-6">
+                            <div className="premium-card rounded-2xl p-6">
+                                <h3 className="font-serif font-bold text-primary text-xl mb-4 flex items-center gap-2">
+                                    <LucideIcon name="map-pin" size={24} className="text-accent" />
+                                    Shipping Address
+                                </h3>
+                                <p className="text-secondary leading-relaxed">{selectedOrder.shippingAddress}</p>
+                            </div>
+                        </div>
+                        
+                        {/* Actions */}
+                        <div className="px-6">
+                            <div className="grid grid-cols-2 gap-4">
+                                <button 
+                                    onClick={() => alert('Contact support: support@kaarigar.com')}
+                                    className="btn-secondary py-4 rounded-xl font-semibold flex items-center justify-center gap-2"
+                                >
+                                    <LucideIcon name="headphones" size={20} />
+                                    Need Help?
+                                </button>
+                                <button 
+                                    onClick={() => {
+                                        setCurrentArtisan(mockArtisans.find(a => a.name === selectedOrder.items[0].artisan));
+                                        setCurrentPage('artisan-profile');
+                                    }}
+                                    className="btn-primary py-4 rounded-xl font-semibold flex items-center justify-center gap-2"
+                                >
+                                    <LucideIcon name="user" size={20} />
+                                    View Artisan
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                );
+            };
+            
+            // Main Render
+            const renderPage = () => {
+                if (!isAuthenticated) {
+                    if (currentPage === 'onboarding') return <OnboardingScreen />;
+                    if (currentPage === 'client-auth') return <ClientAuthScreen />;
+                    return <WelcomeScreen />;
+                }
+                
+                switch (currentPage) {
+                    case 'home':
+                        return <HomePage />;
+                    case 'artisans':
+                        return <ArtisansPage />;
+                    case 'artisan-profile':
+                        return <ArtisanProfilePage />;
+                    case 'orders':
+                        return <OrdersPage />;
+                    case 'order-detail':
+                        return <OrderDetailPage />;
+                    case 'profile':
+                        return user?.type === 'artisan' ? <BentoDashboard /> : <ClientProfilePage />;
+                    case 'artisan-settings':
+                        return <ArtisanSettingsPage />;
+                    case 'specialty-detail':
+                        return <SpecialtyDetailPage />;
+                    case 'cart':
+                        return <CartPage />;
+                    case 'checkout':
+                        return <CheckoutPage />;
+                    case 'order-confirmation':
+                        return <OrderConfirmationPage />;
+                    case 'blog-detail':
+                        return <BlogDetailPage />;
+                    default:
+                        return <HomePage />;
+                }
+            };
+            
+            return (
+                <div className="font-sans min-h-screen">
+                    {renderPage()}
+                    {isAuthenticated && <BottomNav />}
+                    <CameraScanner />
+                    <CommissionModal />
+                    <Toast />
+                </div>
+            );
+        };
+        
+        // Render App with error handling
+        try {
+            const root = ReactDOM.createRoot(document.getElementById('root'));
+            root.render(<App />);
+            
+            // Initialize Lucide Icons after render
+            setTimeout(() => {
+                if (window.lucide) {
+                    window.lucide.createIcons();
+                }
+            }, 100);
+        } catch (error) {
+            console.error('Error rendering app:', error);
+            document.getElementById('root').innerHTML = `
+                <div style="min-height: 100vh; display: flex; align-items: center; justify-content: center; background: linear-gradient(135deg, #0A0A0A 0%, #1A1612 50%, #2D1B0E 100%); padding: 20px;">
+                    <div style="max-width: 500px; background: rgba(26, 22, 18, 0.95); padding: 40px; border-radius: 24px; text-align: center; color: white;">
+                        <h2 style="font-family: 'Playfair Display', serif; font-size: 2rem; margin-bottom: 20px;">Kaarigar Connect</h2>
+                        <p style="color: #E8E2D4; margin-bottom: 20px;">Loading application...</p>
+                        <button onclick="location.reload()" style="background: linear-gradient(135deg, #8B4513 0%, #CD853F 100%); color: white; border: none; padding: 12px 24px; border-radius: 12px; font-weight: 600; cursor: pointer;">
+                            Reload Page
+                        </button>
+                    </div>
+                </div>
+            `;
+        }
+    </script>
+</body>
+</html>
